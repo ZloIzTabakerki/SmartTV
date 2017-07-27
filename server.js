@@ -38,6 +38,7 @@ httpServer = http.createServer( function (req, res) {
               jpeg: 'image/JPEG',
               jpg: 'image/JPG',
               css: 'text/css',
+              js: 'application/x-javascript'
             }, 
             type = url.slice(url.lastIndexOf('.') + 1);
 
