@@ -23,7 +23,7 @@ httpServer = http.createServer( function (req, res) {
       res.end();
       
     });
-  } else if (method = 'GET' && url.indexOf('/assets') === 0) {
+  } else if (method = 'GET' && url.indexOf('/assets/') === 0) {
 
     //static files server in 'assets' folder
     
