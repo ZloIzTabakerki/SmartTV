@@ -1,5 +1,6 @@
 var http = require('http'),
-    fs = require('fs');
+    fs = require('fs'),
+    port = process.env.PORT || 3000;;
 
 httpServer = http.createServer( function (req, res) { 
   
@@ -61,6 +62,6 @@ httpServer = http.createServer( function (req, res) {
 
 });
 
-httpServer.listen(8080, function () {
-    console.log('Started on 8080!');
+httpServer.listen(port, function () {
+    console.log('Started on ' + port + '!');
 });
