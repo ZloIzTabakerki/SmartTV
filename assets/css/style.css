@@ -1,0 +1,17 @@
+h1 {
+  color: red;
+}
+
+html {
+  background-image: url('/assets/img/desktop.jpg');
+  background-position: 50% 0;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  height: 100%
+}
+
+@media (max-width: 600px) {
+  html {
+    background-image: url('/assets/img/mob.jpg');
+  }
+}
