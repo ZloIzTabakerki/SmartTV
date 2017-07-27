@@ -14,6 +14,8 @@ httpServer = http.createServer( function (req, res) {
     file = fs.readFile('./views/index.html', function (err, data) {
       if (err) {
         console.log('err');
+        res.writeHead(404);
+        res.end('File not found');
       }
 
       res.writeHead(202, {"Content-type":"text/html"});
