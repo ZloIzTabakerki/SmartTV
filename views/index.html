@@ -6,9 +6,78 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
   <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
-  <h1>Hello, world.</h1>
+  <header class="nav-container">
+    <nav>
+      <ul class="nav-items">
+        <li class="nav-item">
+          <button class="nav-btn active"><i class="fa fa-television" aria-hidden="true"></i>Channels</button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-btn"><i class="fa fa-eye" aria-hidden="true"></i>Watchlist</button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-btn"><i class="fa fa-video-camera" aria-hidden="true"></i>Reclist</button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-btn"><i class="fa fa-lock" aria-hidden="true"></i>Blocklist</button>
+        </li>
+      </ul>
+    </nav>    
+  </header>
+  <div class="cinema-container">
+    <div class="audio">
+      <div class="speaker">
+        <div class="audio-indicator">
+          
+        </div>        
+      </div>
+    </div>
+    <div class="tv">
+      <div class="screen">
+
+      </div>
+    </div>
+    <div class="audio">
+      <div class="speaker">
+        <div class="audio-indicator">
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="aside-list-container">
+    <div class="aside-list">
+      <h2 class="aside-list-heading">Channels</h2>
+      <ul class="aside-list-items">
+        <li class="aside-list-item"></li>
+      </ul>
+    </div>
+  </aside>
+  <footer class="tv-panel-container">
+    <div class="tv-panel">
+      <div class="tv-controls">
+        <button class="record-btn">rec</button>
+        <button class="shutdown-btn">
+          <i class="fa fa-power-off" aria-hidden="true"></i>
+        </button>
+        <button class="mute-btn">
+          <i class="fa fa-volume-off" aria-hidden="true"></i>
+        </button>
+        <input type="range" class="sound-controls">
+      </div>
+      <div class="tv-info-container">
+        <h2 class="tv-info-heading">Current:</h2>
+        <div class="current-info tv-info-field">
+        </div>
+        <h2 class="tv-info-heading">Next:</h2>
+        <div class="next-info tv-info-field">
+        </div>
+      </div>
+    </div>
+  </footer>
   <script src="/assets/js/script.js"></script>
 </body>
 </html>
