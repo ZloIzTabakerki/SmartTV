@@ -56,6 +56,31 @@ httpServer.on('request', (req, res) => {
         res.end(data);
       });
     } 
+  } else if (method === 'POST') {
+    if (url === '/edit-volume') {
+
+      let reqData = '';
+      let result = [];
+
+      req.on('data', (data) => {
+        reqData += data;
+      });
+
+      req.on('end', (data) => {
+
+        reqData = JSON.parse(reqData);
+
+        for (let key in reqData) {
+          result.push(reqData[key]);
+        }
+                
+        res.writeHead(200, {"Content-type":"text/plain"});
+        res.end(result.join(','));
+      });
+
+
+    }
+
   } else {
 
     //404-requests handling
