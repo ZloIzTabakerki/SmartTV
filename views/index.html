@@ -28,7 +28,7 @@
     </nav>    
   </header>
   <div class="cinema-container">
-    <div class="audio">
+    <div class="audio audio-left">
       <div class="speaker">
         <div class="audio-indicator">
           
@@ -40,7 +40,7 @@
 
       </div>
     </div>
-    <div class="audio">
+    <div class="audio audio-right">
       <div class="speaker">
         <div class="audio-indicator">
 
@@ -59,14 +59,18 @@
   <footer class="tv-panel-container">
     <div class="tv-panel">
       <div class="tv-controls">
-        <button class="record-btn">rec</button>
+        <div class="tv-controls-add tv-controls-left">
+          <button class="record-btn">rec</button>
+        </div>      
         <button class="shutdown-btn">
           <i class="fa fa-power-off" aria-hidden="true"></i>
         </button>
-        <button class="mute-btn">
-          <i class="fa fa-volume-off" aria-hidden="true"></i>
-        </button>
-        <input type="range" class="sound-controls">
+        <div class="tv-controls-add tv-controls-right">
+          <button class="mute-btn">
+            <i class="fa fa-volume-off" aria-hidden="true"></i>
+          </button>
+          <input type="range" class="sound-controls" min="0" max="100" value="50">
+        </div>
       </div>
       <div class="tv-info-container">
         <h2 class="tv-info-heading">Current:</h2>

@@ -38,17 +38,18 @@ ul {
 /* layout styles */
 
 .aside-list-container,
+.cinema-container,
 .tv-panel-container,
 .nav-container {
   margin: 0 auto;
   width: 50%;
-  padding: 1%;
+  padding: 1%; 
   box-sizing: border-box;
 }
 
 .cinema-container {
+  position: relative;
   flex-grow: 1;
-  display: flex;
   justify-content: space-around;
   align-items: center;
 }
@@ -122,9 +123,11 @@ ul {
 /* tv image styles */
 
 .tv {
-  position: relative;
-  width: 300px;
-  height: 250px;
+  position: absolute;
+  top: 50px;
+  bottom: 50px;
+  left: 100px;
+  right: 100px;
   background-color: var(--tv-color);
   background-image: radial-gradient(
                     ellipse at 100% 300%, 
@@ -133,18 +136,26 @@ ul {
 }
 
 .tv::after {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
   display: block;
   content: '';
   width: 20%;
   height: 10px;
   margin: 0 auto;
   background-color: green;
-   border: 1px solid rgba(0, 0, 0, 0.5); 
+  border: 1px solid rgba(0, 0, 0, 0.5); 
 }
 
 .screen {
-  margin: 10px;
-  height: 200px;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 50px;
   background-color: var(--screen-color);
   background-image: radial-gradient(
                     ellipse at 85% 300%, 
@@ -153,9 +164,10 @@ ul {
 }
 
 .audio {
-  position: relative;
+  position: absolute;
+  top: 20px;
+  bottom: 20px;
   width: 60px;
-  height: 350px;
   border-radius: 10px 10px 0 0;
   background-color: var(--tv-color);
   background-image: radial-gradient(
@@ -177,12 +189,22 @@ ul {
   background-color: inherit;
 }
 
+.audio-left {
+  left: 20px;
+}
+
+.audio-right {
+  right: 20px;
+}
+
 .speaker {
-  position: relative;
-  margin: 5px;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 20px;
   border: 2px solid #2a2a2a; 
   border-radius: 5px;
-  height: 325px;
   background-color: #49403a;
   background-image: linear-gradient(to left top, 
                                        rgba(0, 0, 0, 0.2) 10%, 
@@ -202,14 +224,13 @@ ul {
   bottom: 0;
   height: 50%;
   width: 100%;
-  background-image: linear-gradient(to top, green, red);
-  background-size: 100% 325px;
-  background-position: 0 100%;
+  background-color: green;
 }
 
 /* aside list styles */
 
 .aside-list {
+  position: relative;
   width: 100%;
   height: 100%;
   border-radius: 5px;
@@ -226,8 +247,11 @@ ul {
 }
 
 .aside-list-items {
-  height: 93%;  
-  margin: 10px;
+  position: absolute;
+  top: 40px;
+  right: 10px;
+  left: 10px;
+  bottom: 10px;
   margin-top: 0;
   background-color: var(--background-color);
 }
@@ -235,13 +259,127 @@ ul {
 /* footer panel styles  */
 
 .tv-panel {
-  /* margin: 2%; */
   width: 100%;
   box-sizing: border-box;
   padding: 10px;
   border-radius: 5px;
   background-color: var(--main-if-color);
 }
+
+.tv-controls {
+  position: relative;
+  display: flex;
+}
+
+/* .tv-controls button {
+  display: inline-block;
+} */
+
+.shutdown-btn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  border: none;
+  width: 50px;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 5px;
+  background-color: green;
+  font-size: 30px;
+  color: white;
+  
+  /* align-self: center; */
+}
+
+.tv-controls-add {
+  width: 50%;
+  box-sizing: border-box; 
+  padding-top: 5px;
+  height: 35px;
+  line-height: 30px;
+}
+
+.tv-controls-right {
+  display: flex;
+  align-items: center;
+  padding-left: 40px;
+  text-align: left;
+}
+
+.shutdown-btn,
+.record-btn,
+.mute-btn {
+  transition: 0.2s;
+}
+
+.shutdown-btn:focus,
+.record-btn:focus,
+.mute-btn:focus {
+  outline: none;
+}
+
+.shutdown-btn:focus,
+.record-btn:focus,
+.shutdown-btn:hover,
+.record-btn:hover {
+  background-color: var(--active-if-color);
+}
+
+.mute-btn:focus,
+.mute-btn:hover {
+  color: var(--active-if-color);
+}
+
+.mute-btn {
+  border: none;
+  padding: 0;
+  background-color: transparent;
+  color: green;
+  font-size: 30px;
+}
+
+.mute-btn.muted {
+  color: var(--secondary-if-color);
+}
+
+.sound-controls {
+  margin: 0 10px;
+  max-width: 150px; 
+  width: 60%; 
+}
+
+.tv-controls-left {
+  padding-right: 40px;
+  text-align: right; 
+}
+
+.record-btn {
+  border: none;
+  border-radius: 5px;
+  box-sizing: border-box;
+  padding: 0 5px;
+  height: 30px;
+  line-height: 30px;
+  background-color: var(--secondary-if-color);
+  color: white;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+
+.record-btn::before {
+  content: '';
+  display: inline-block;
+  margin-right: 0.4em;
+  height: 8px;
+  width: 8px;
+  border-radius: 50%;
+  background-color: red;
+   vertical-align: middle; 
+}
+
 
 .tv-info-heading {
   margin: 5px 0;
@@ -267,5 +405,15 @@ ul {
 @media (max-width: 950px) {
   .aside-list-container {
     display: none;
+  }
+
+  body {
+    max-width: 600px;
+  }
+
+  .cinema-container,
+  .tv-panel-container,
+  .nav-container {
+    width: 100%;
   }
 }
