@@ -9,8 +9,6 @@ const express = require('express'),
       port = process.env.PORT || 3000,
       dbPath = __dirname + '/db/states.json';
 
-eventEmitter.setMaxListeners(0);
-
 // function for updating DB
 
 function updateDB(req) {
@@ -64,7 +62,7 @@ app.get('/update-state', (req, res) => {
     console.log(reqBody);
 
     res.send(reqBody);
-    
+
   });
 
 });
