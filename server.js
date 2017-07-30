@@ -54,16 +54,21 @@ app.get('/', (req, res) => {
 // long-polling changes handling
 
 app.get('/update-state', (req, res) => {
+
+  console.log('req achieved');
+
+  function updateListener(reqBody) {
+    res.json(reqBody);
+    console.dir(reqBody);
+  }
   
-  eventEmitter.addListener('state-updated', (reqBody) => {
+  eventEmitter.once('state-updated', updateListener);
 
-    reqBody = JSON.stringify(reqBody);
-
-    console.log(reqBody);
-
-    res.send(reqBody);
-
-  });
+  req.on('aborted', () => {
+    res.end();
+    eventEmitter.removeListener('state-updated', updateListener);
+    console.log('aborted');
+  })
 
 });
 
@@ -75,7 +80,7 @@ app.post('/update-state', (req, res) => {
   
   eventEmitter.emit('state-updated', req.body);
 
-  res.send();
+  res.end();
 
 });
 
