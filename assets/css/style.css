@@ -16,7 +16,6 @@ html {
   min-width: 320px;
   background-color: var(--background-color); 
   font-family: sans-serif;
-  overflow: hidden;
 }
 
 body {
@@ -28,6 +27,7 @@ body {
   align-items: stretch; 
   height: 100%;
   max-width: 600px;
+  min-width: 320px;
 }
 
 ul {
@@ -46,6 +46,11 @@ ul {
   width: 100%; 
   padding: 1%; 
   box-sizing: border-box;
+}
+
+
+.nav-container {
+   overflow: hidden; 
 }
 
 .cinema-container {
@@ -86,7 +91,7 @@ ul {
   display: block;
   position: relative;
   width: 100%;
-  box-sizing: padding-box;
+  box-sizing: border-box;
   border: none;
   border-radius: 5px;
   padding: 20px 0 20px 40px;
@@ -228,6 +233,9 @@ ul {
   height: 50%;
   width: 100%;
   background-color: green;
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  transition: 0.3s;
 }
 
 /* aside list styles */
@@ -412,11 +420,11 @@ ul {
     max-width: 600px;
   }
 
-  .cinema-container,
+  /* .cinema-container,
   .tv-panel-container,
   .nav-container {
     width: 100%;
-  }
+  } */
 }
 
 @media (max-width: 600px) {

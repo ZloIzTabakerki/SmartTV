@@ -42,13 +42,34 @@ function updateDB(req) {
   });
 }
 
+function sendDBIndexData(res) {
+  
+  fs.readFile(dbPath, (err, data) => {
+
+    if (err) {
+      console.log(err);
+    }
+
+    try {
+      data = JSON.parse(data.toString('utf8'));
+    } catch (e) {
+      console.log(err);
+      res.sendFile(__dirname + 'views/index.html');
+    }
+
+    res.render('index', data);
+  });
+
+}
+
 app.use(bodyParser.json());
 app.use('/assets', express.static('./assets'));
+app.set('view engine', 'jade')
 
 // index page
 
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/views/index.html');
+  sendDBIndexData(res);
 });
 
 // long-polling changes handling

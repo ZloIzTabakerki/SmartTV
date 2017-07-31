@@ -1,0 +1,78 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(
+      name="viewport" 
+      content="width=device-width, initial-scale=1.0")
+    meta(
+      http-equiv="X-UA-Compatible" 
+      content="ie=edge")
+    link(
+      rel="stylesheet" 
+      href="/assets/css/style.css")
+    link(
+      rel="stylesheet" 
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css")
+    title= pageTitle
+  body
+    header.nav-container
+      nav
+        ul.nav-items
+          - let navItems = [];
+          - navItems.push({name: 'Channels', icon: 'fa-television'});
+          - navItems.push({name: 'Watchlist', icon: 'fa-eye'});
+          - navItems.push({name: 'Reclist', icon: 'fa-video-camera'});
+          - navItems.push({name: 'Blocklist', icon: 'fa-lock'});
+          - for (let i = 0, max = navItems.length; i < max; i += 1) {
+            li.nav-item
+              button.nav-btn
+                i(
+                  class='fa ' + navItems[i].icon
+                  aria-hidden="true")
+                = navItems[i].name
+          -}
+    .cinema-container
+      - let indicatorHeight = volume + '%';
+      - let indicatorColor = `rgb(${ Math.round(255 * volume / 100) }, ${ Math.round(255 - (255 * volume / 100)) }, 0)`; 
+      .audio.audio-left
+        .speaker
+          .audio-indicator(style=`height: ${indicatorHeight}; background-color: ${indicatorColor}`)
+      .tv
+        .screen
+      .audio.audio-right
+        .speaker
+          .audio-indicator(style=`height: ${indicatorHeight}; background-color: ${indicatorColor}`)
+    aside.aside-list-container
+      .aside-list
+        h2.aside-list-heading Channels
+        ul.aside-list-items
+          li.aside-list-item
+    footer.tv-panel-container
+      .tv-panel
+        .tv-controls
+          .tv-controls-add.tv-controls-left
+            button.record-btn rec
+          button.shutdown-btn
+            i(
+              class="fa fa-power-off"
+              aria-hidden="true")
+          .tv-controls-add.tv-controls-right
+            button.mute-btn
+              i(
+                class="fa fa-volume-off" 
+                aria-hidden="true")
+            input(
+              type="range" 
+              name="volume" 
+              class="sound-controls"
+              step="1" 
+              min="0" 
+              max="100" 
+              value= volume)
+        .tv-info-container  
+          h2.tv-info-heading Current:
+          .current-info.tv-info-field
+          h2.tv-info-heading Next:
+          .next-info.tv-info-field
+    script(src="/assets/js/script.js")
