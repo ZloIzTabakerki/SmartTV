@@ -1,4 +1,53 @@
-let smartApp = (function() {
+(function() {
+
+  let smartApp;
+  let app;
+  
+  function createApp() {  
+    let xhr = new XMLHttpRequest();
+
+    xhr.open("GET", '/current-state', true);
+    xhr.send();
+
+    xhr.onreadystatechange = function () {
+
+      if (this.readyState != 4) return;
+
+      if (xhr.status != 200) {
+        createApp();
+        return;
+      }          
+      
+      let response = this.responseText;
+          
+      response = JSON.parse(response);
+        
+      console.dir(response);
+
+      states = response;
+
+      smartApp = new App(states, {
+        volumeControl: document.querySelector('.sound-controls'), 
+        volumeIndicators: document.querySelectorAll('.audio-indicator'),
+        screenContent: document.getElementById('screen-content'),
+        channelsListBtn: document.getElementById('channels-btn'),
+        asideListContainer: document.querySelector('.aside-list-container'),
+        currentChannelInfo: document.querySelector('.current-info'),
+        
+        channelsContainer: document.querySelector('.aside-channels-items'),
+        watchlistContainer: document.querySelector('.aside-watchlist-items'),
+        reclistContainer: document.querySelector('.aside-reclist-items'),
+        blockContainer: document.querySelector('.aside-blocklist-items')
+      });
+
+      smartApp.refreshValues(states)
+      smartApp.updateStates();
+
+    }
+
+  }
+
+  createApp();
 
   function volumeControlHandler(e) {
 
@@ -42,7 +91,7 @@ let smartApp = (function() {
   class App {
     constructor(states, UIElems) {
       this._volume = states.volume;
-      this._currentChannelId = states.currentChannelId;
+      this._currentChannel = states.currentChannel;
       this._isOn = states.isOn;
       this._isMuted = states.isMuted;
 
@@ -88,14 +137,26 @@ let smartApp = (function() {
       }
     }
 
+    refreshValues(states) {
+      if (states.volume) {
+        this._setVolume(states.volume);
+      }
+
+      if (states.currentChannel) {
+        this._setCurrentChannelId(states.currentChannel);
+      }
+
+    }
+
     setChannelsList(value) {      
       this._channelsList = value;
     }
 
-    _setCurrentChannelId (channelId) {
+    _setCurrentChannelId(channelObj) {
 
-      let name = this._channelsList[channelId].name;
-      let imgUrl = this._channelsList[channelId].url;
+      let name = channelObj.name;
+      let imgUrl = channelObj.url;
+      let channelId = channelObj.id;
 
       console.log(`New channel: ${name}`);
 
@@ -147,13 +208,7 @@ let smartApp = (function() {
 
         response = JSON.parse(response);
 
-        if (response.volume) {
-          self._setVolume(response.volume);
-        }
-
-        if (response.currentChannelId) {
-          self._setCurrentChannelId(response.currentChannelId);
-        }
+        self.refreshValues(response);
         
         self.updateStates();
       }
@@ -216,8 +271,10 @@ let smartApp = (function() {
 
       function updateCurrentChannel(channelId) {
 
-          let body = `{"currentChannelId":"${channelId}"}`;    
+          let body = `{"currentChannel":{"id":"${channelId}","name":"${channels[channelId].name}","url":"${channels[channelId].url}"}}`;    
           let xhr = new XMLHttpRequest();
+
+          console.dir(JSON.parse(body));
 
           xhr.open("POST", '/update-state', true)
           xhr.setRequestHeader('Content-Type', 'application/json');
@@ -255,21 +312,6 @@ let smartApp = (function() {
 
   }
 
-  var smartApp = new App({}, {
-    volumeControl: document.querySelector('.sound-controls'), 
-    volumeIndicators: document.querySelectorAll('.audio-indicator'),
-    screenContent: document.getElementById('screen-content'),
-    channelsListBtn: document.getElementById('channels-btn'),
-    asideListContainer: document.querySelector('.aside-list-container'),
-    currentChannelInfo: document.querySelector('.current-info'),
-    
-    channelsContainer: document.querySelector('.aside-channels-items'),
-    watchlistContainer: document.querySelector('.aside-watchlist-items'),
-    reclistContainer: document.querySelector('.aside-reclist-items'),
-    blockContainer: document.querySelector('.aside-blocklist-items')
-});
-
-  smartApp.updateStates();
 
 
 })();
