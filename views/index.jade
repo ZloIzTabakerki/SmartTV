@@ -20,13 +20,13 @@ html(lang="en")
       nav
         ul.nav-items
           - let navItems = [];
-          - navItems.push({name: 'Channels', icon: 'fa-television'});
-          - navItems.push({name: 'Watchlist', icon: 'fa-eye'});
-          - navItems.push({name: 'Reclist', icon: 'fa-video-camera'});
-          - navItems.push({name: 'Blocklist', icon: 'fa-lock'});
+          - navItems.push({id: 'channels-btn', name: 'Channels', icon: 'fa-television'});
+          - navItems.push({id: 'watchlist-btn', name: 'Watchlist', icon: 'fa-eye'});
+          - navItems.push({id: 'reclist-btn', name: 'Reclist', icon: 'fa-video-camera'});
+          - navItems.push({id: 'blocklist-btn', name: 'Blocklist', icon: 'fa-lock'});
           - for (let i = 0, max = navItems.length; i < max; i += 1) {
             li.nav-item
-              button.nav-btn
+              button(class="nav-btn" id=navItems[i].id)
                 i(
                   class='fa ' + navItems[i].icon
                   aria-hidden="true")
@@ -37,17 +37,30 @@ html(lang="en")
       - let indicatorColor = `rgb(${ Math.round(255 * volume / 100) }, ${ Math.round(255 - (255 * volume / 100)) }, 0)`; 
       .audio.audio-left
         .speaker
-          .audio-indicator(style=`height: ${indicatorHeight}; background-color: ${indicatorColor}`)
+          .audio-indicator(style=`height: ${indicatorHeight}; background-image: linear-gradient(to top, green 0%, ${indicatorColor} 100%)`)
       .tv
         .screen
+          #screen-content.screen-content
       .audio.audio-right
         .speaker
-          .audio-indicator(style=`height: ${indicatorHeight}; background-color: ${indicatorColor}`)
+          .audio-indicator(style=`height: ${indicatorHeight}; background-image: linear-gradient(to top, green 0%, ${indicatorColor} 100%)`)
     aside.aside-list-container
-      .aside-list
+      .aside-channels-list
         h2.aside-list-heading Channels
-        ul.aside-list-items
-          li.aside-list-item
+        ul.aside-channels-items
+      
+      .aside-watchlist
+        h2.aside-list-heading Watchlist
+        ul.aside-watchlist-items
+      
+      .aside-reclist
+        h2.aside-list-heading Reclist
+        ul.aside-reclist-items
+
+      .aside-blocklist
+        h2.aside-list-heading Blocklist
+        ul.aside-blocklist-items 
+
     footer.tv-panel-container
       .tv-panel
         .tv-controls

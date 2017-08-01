@@ -1,6 +1,7 @@
 const express = require('express'),
       bodyParser = require('body-parser'),
       fs = require('fs'),
+      channelsList = require('./db/channels.json'),
       EventEmitter = require('events').EventEmitter,
 
       app = express(),
@@ -21,26 +22,16 @@ function updateDB(req) {
     });
   }
 
-  fs.readFile(dbPath, (err, data) => {
+  let states = require('./db/states.json');
 
-    if (err) {
-      console.log(err);
-    }
+  Object.assign(states, req.body);
 
-    try {
-      data = JSON.parse(data.toString('utf8'));
-    } catch (e) {
-      data = JSON.stringify(req.body);
+  states = JSON.stringify(states);
 
-      writeDBData(data);
-    }
-
-    Object.assign(data, req.body);
-    data = JSON.stringify(data);
-
-    writeDBData(data);
-  });
+  writeDBData(states);
 }
+
+// "/" callback
 
 function sendDBIndexData(res) {
   
@@ -62,9 +53,15 @@ function sendDBIndexData(res) {
 
 }
 
+//middlewares
+
 app.use(bodyParser.json());
 app.use('/assets', express.static('./assets'));
-app.set('view engine', 'jade')
+app.set('view engine', 'jade');
+
+// ============
+//    ROUTES
+// ============
 
 // index page
 
@@ -104,6 +101,13 @@ app.post('/update-state', (req, res) => {
   res.end();
 
 });
+
+app.get('/channels', (req, res) => {
+
+  res.json(channelsList);
+
+});
+
 
 app.listen(port, () => {
   console.log('Started on ' + port + '!');
