@@ -129,7 +129,8 @@
       this._channelBtns = undefined;
 
       this._closeAsideBtn.addEventListener('click', () => {
-        this._asideListContainer.className = 'aside-list-container';        
+        this._asideListContainer.className = 'aside-list-container';    
+        document.querySelector('.nav-btn.active').classList.remove('active');       
         document.documentElement.classList.remove('aside-list-showed');
       });
       this._volumeControl.addEventListener('change', volumeControlHandler);

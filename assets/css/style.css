@@ -149,7 +149,8 @@ ul {
   color: var(--background-color);
   font-size: 1.3rem;
   font-weight: bold;
-  transition: 0.2s;
+  transition: background-color 0.2s,
+              transform 0.2s;
 }
 
 .nav-btn.active {
@@ -186,7 +187,7 @@ ul {
   left: 20px;
   top: 50%;
   transform: translateY(-50%);
-  transition: 0.2s;
+  transition: transform 0.2s;
 }
 
 .nav-btn:focus .fa,
@@ -313,9 +314,7 @@ ul {
   height: 50%;
   width: 100%;
   background-color: green;
-  -webkit-transition: 0.3s;
-  -moz-transition: 0.3s;
-  transition: 0.3s;
+  transition: height 0.3s;
 }
 
 /* aside list styles */
@@ -336,14 +335,16 @@ ul {
   color: darkred;
   outline: none;
   transform: scale(1.2);
-  transition: 0.2s;
+  transition: transform 0.2s,
+              color 0.2s;
  }
 
 .close-aside-button:hover {
   color: darkred;
   outline: none;
   transform: scale(1.2);
-  transition: 0.2s;
+  transition: transform 0.2s,
+              color 0.2s;
 }
 
 .close-aside-button:active {
@@ -490,7 +491,8 @@ ul {
 .shutdown-btn,
 .record-btn,
 .mute-btn {
-  transition: 0.2s;
+  transition: background-color 0.2s,
+              color 0.2s;
 }
 
 .shutdown-btn:focus,
