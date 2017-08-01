@@ -16,35 +16,9 @@ html(lang="en")
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css")
     title= pageTitle
   body
-    header.nav-container
-      nav
-        ul.nav-items
-          - let navItems = [];
-          - navItems.push({id: 'channels-btn', name: 'Channels', icon: 'fa-television'});
-          - navItems.push({id: 'watchlist-btn', name: 'Watchlist', icon: 'fa-eye'});
-          - navItems.push({id: 'reclist-btn', name: 'Reclist', icon: 'fa-video-camera'});
-          - navItems.push({id: 'blocklist-btn', name: 'Blocklist', icon: 'fa-lock'});
-          - for (let i = 0, max = navItems.length; i < max; i += 1) {
-            li.nav-item
-              button(class="nav-btn" id=navItems[i].id)
-                i(
-                  class='fa ' + navItems[i].icon
-                  aria-hidden="true")
-                = navItems[i].name
-          -}
-    .cinema-container
-      - let indicatorHeight = volume + '%';
-      - let indicatorColor = `rgb(${ Math.round(255 * volume / 100) }, ${ Math.round(255 - (255 * volume / 100)) }, 0)`; 
-      .audio.audio-left
-        .speaker
-          .audio-indicator(style=`height: ${indicatorHeight}; background-image: linear-gradient(to top, green 0%, ${indicatorColor} 100%)`)
-      .tv
-        .screen
-          #screen-content.screen-content
-      .audio.audio-right
-        .speaker
-          .audio-indicator(style=`height: ${indicatorHeight}; background-image: linear-gradient(to top, green 0%, ${indicatorColor} 100%)`)
     aside.aside-list-container
+      button#close-aside-button.close-aside-button
+        i(class="fa fa-times" aria-hidden="true")
       .aside-channels-list
         h2.aside-list-heading Channels
         ul.aside-channels-items
@@ -59,33 +33,64 @@ html(lang="en")
 
       .aside-blocklist
         h2.aside-list-heading Blocklist
-        ul.aside-blocklist-items 
-
-    footer.tv-panel-container
-      .tv-panel
-        .tv-controls
-          .tv-controls-add.tv-controls-left
-            button.record-btn rec
-          button.shutdown-btn
-            i(
-              class="fa fa-power-off"
-              aria-hidden="true")
-          .tv-controls-add.tv-controls-right
-            button.mute-btn
+        ul.aside-blocklist-items
+    .main-container
+      header.nav-container
+        nav
+          ul.nav-items
+            - let navItems = [];
+            - navItems.push({id: 'channels-btn', name: 'Channels', icon: 'fa-television'});
+            - navItems.push({id: 'watchlist-btn', name: 'Watchlist', icon: 'fa-eye'});
+            - navItems.push({id: 'reclist-btn', name: 'Reclist', icon: 'fa-video-camera'});
+            - navItems.push({id: 'blocklist-btn', name: 'Blocklist', icon: 'fa-lock'});
+            - for (let i = 0, max = navItems.length; i < max; i += 1) {
+              li.nav-item
+                - let classes = ['nav-btn']
+                - if (navItems[i].name !== 'Channels') classes.push('inactive');
+                button(class=classes id=navItems[i].id)
+                  i(
+                    class='fa ' + navItems[i].icon
+                    aria-hidden="true")
+                  span.nav-btn-heading
+                    = navItems[i].name
+            -}
+      .cinema-container
+        - let indicatorHeight = volume + '%';
+        - let indicatorColor = `rgb(${ Math.round(255 * volume / 100) }, ${ Math.round(255 - (255 * volume / 100)) }, 0)`; 
+        .audio.audio-left
+          .speaker
+            .audio-indicator(style=`height: ${indicatorHeight}; background-image: linear-gradient(to top, green 0%, ${indicatorColor} 100%)`)
+        .tv
+          .screen
+            #screen-content.screen-content
+        .audio.audio-right
+          .speaker
+            .audio-indicator(style=`height: ${indicatorHeight}; background-image: linear-gradient(to top, green 0%, ${indicatorColor} 100%)`)
+      footer.tv-panel-container
+        .tv-panel
+          .tv-controls
+            .tv-controls-add.tv-controls-left
+              button.record-btn rec
+            button.shutdown-btn
               i(
-                class="fa fa-volume-off" 
+                class="fa fa-power-off"
                 aria-hidden="true")
-            input(
-              type="range" 
-              name="volume" 
-              class="sound-controls"
-              step="1" 
-              min="0" 
-              max="100" 
-              value= volume)
-        .tv-info-container  
-          h2.tv-info-heading Current:
-          .current-info.tv-info-field
-          h2.tv-info-heading Next:
-          .next-info.tv-info-field
+            .tv-controls-add.tv-controls-right
+              button.mute-btn
+                i(
+                  class="fa fa-volume-off" 
+                  aria-hidden="true")
+              input(
+                type="range" 
+                name="volume" 
+                class="sound-controls"
+                step="1" 
+                min="0" 
+                max="100" 
+                value= volume)
+          .tv-info-container  
+            h2.tv-info-heading Current:
+            .current-info.tv-info-field
+            h2.tv-info-heading Next:
+            .next-info.tv-info-field
     script(src="/assets/js/script.js")

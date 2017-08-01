@@ -1,7 +1,6 @@
 (function() {
 
   let smartApp;
-  let app;
   
   function createApp() {  
     let xhr = new XMLHttpRequest();
@@ -31,6 +30,8 @@
         volumeIndicators: document.querySelectorAll('.audio-indicator'),
         screenContent: document.getElementById('screen-content'),
         channelsListBtn: document.getElementById('channels-btn'),
+
+        closeAsideBtn: document.getElementById('close-aside-button'),
         asideListContainer: document.querySelector('.aside-list-container'),
         currentChannelInfo: document.querySelector('.current-info'),
         
@@ -86,6 +87,16 @@
     }
 
     smartApp.toggleAsideList(this.id);
+    
+    if (!this.classList.contains('active')) {
+      if (document.querySelector('.nav-btn.active') !== null) {
+        document.querySelector('.nav-btn.active').classList.remove('active');
+      }
+      this.classList.add('active');
+    } else {
+      this.classList.remove('active');
+    }
+
   }
 
   class App {
@@ -108,6 +119,7 @@
       this._channelsListBtn = UIElems.channelsListBtn;
 
       this._asideListContainer = UIElems.asideListContainer;
+      this._closeAsideBtn = UIElems.closeAsideBtn;
       this._channelsContainer = UIElems.channelsContainer;
       this._watchlistContainer = UIElems.watchlistContainer;
       this._reclistContainer = UIElems.reclistContainer;
@@ -116,6 +128,10 @@
       
       this._channelBtns = undefined;
 
+      this._closeAsideBtn.addEventListener('click', () => {
+        this._asideListContainer.className = 'aside-list-container';        
+        document.documentElement.classList.remove('aside-list-showed');
+      });
       this._volumeControl.addEventListener('change', volumeControlHandler);
       this._channelsListBtn.addEventListener('click', channelsListBtnHandler);
     }
@@ -127,7 +143,7 @@
       let color = `rgb(
                   ${ Math.round(255 * value / 100) },
                   ${ Math.round(255 - (255 * value / 100)) },
-                  0)`
+                  0)`;
         
       for (let i = 0, length = this._volumeIndicators.length; i < length; i++) {
         this._volumeIndicators[i].style.height = `${value}%`;
@@ -242,9 +258,11 @@
       function changeClasses(cssClass) {
         if (self._asideListContainer.classList.contains(cssClass)) {
           self._asideListContainer.classList.remove(cssClass);
+          document.documentElement.classList.remove('aside-list-showed');
         } else {
-          self._asideListContainer.cssClass = 'aside-list-container';
+          self._asideListContainer.className = 'aside-list-container';
           self._asideListContainer.classList.add(cssClass);
+          document.documentElement.classList.add('aside-list-showed');
         }
         
         self.updateStates();
@@ -296,11 +314,20 @@
         let isActive = this._currentChannel.id === key ? ' active' : '';
 
         HTML += `<li class="channels-list-item">
-                  <button class="channel-btn${ isActive }" id="channel-${key}-btn" data-channel-id="${key}">
-                  <img src="${channels[key].url}" alt="${channels[key].name}" class="channel-img">
-                  <span class"channel-heading">${channels[key].name}</span>
-                  </button>
+                <button class="channel-btn${ isActive }" 
+                        id="channel-${key}-btn" 
+                        data-channel-id="${key}"
+                        style="background-image: url('${channels[key].url}')">
+                <span class="channel-heading">${channels[key].name}</span>
+                </button>
                 </li>`;
+
+        // HTML += `<li class="channels-list-item">
+        //           <button class="channel-btn${ isActive }" id="channel-${key}-btn" data-channel-id="${key}">
+        //           <img src="${channels[key].url}" width="300" height="300" alt="${channels[key].name}" class="channel-img">
+        //           <span class"channel-heading">${channels[key].name}</span>
+        //           </button>
+        //         </li>`;
       }
 
       this._channelsContainer.innerHTML = HTML;

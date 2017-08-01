@@ -19,12 +19,8 @@ html {
 }
 
 body {
+  position: relative;
   margin: 0 auto;
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column; 
-  justify-content: space-between;
-  align-items: stretch; 
   height: 100%;
   max-width: 1200px;
   min-width: 320px;
@@ -38,15 +34,41 @@ ul {
 
 /* layout styles */
 
+.main-container {
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  max-width: 600px;
+  padding: 10px;
+  flex-direction: column; 
+  justify-content: space-between;
+  align-items: stretch; 
+  box-sizing: border-box;
+}
+
 .aside-list-container,
 .cinema-container,
 .tv-panel-container,
 .nav-container {
   margin: 0 auto;
-  width: 50%; 
-  padding: 1%; 
-  box-sizing: border-box;
-  max-width: 550px;
+}
+
+
+.cinema-container,
+.tv-panel-container,
+.nav-container {
+  width: 100%;
+}
+
+.aside-list-showed .main-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  height: auto;
+  width: 50%;
+  padding-right: 5px;
 }
 
 .nav-container {
@@ -65,11 +87,16 @@ ul {
   align-self: stretch;
 }
 
-.aside-list-container {  
-  order: 4;
+.aside-list-container { 
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
   width: 50%;
-  height: 100%;
+  padding: 10px;
+  padding-left: 5px;
   display: none;  
+  box-sizing: border-box;
 }
 
 .aside-list-container.show-channels,
@@ -99,13 +126,13 @@ ul {
 .nav-items {
   display: flex;
   flex-wrap: wrap;
-  margin: -10px;
+  margin: -5px;
   /* padding: 1%; */
 }
 
 .nav-item {
-  margin: 10px; 
-  width: calc(50% - 20px);
+  margin: 5px; 
+  width: calc(50% - 10px);
 }
 
 .nav-btn {
@@ -126,13 +153,31 @@ ul {
 }
 
 .nav-btn.active {
-  color: var(--secondary-if-color);
+  color: var(--main-if-color);
+  background-color: var(--secondary-if-color);  
+}
+
+.nav-btn.active:focus,
+.nav-btn.active:hover {
+  color: var(--main-if-color);
+  background-color: var(--secondary-if-color);
 }
 
 .nav-btn:focus,
 .nav-btn:hover {
   background-color: var(--active-if-color);
   outline: none;
+}
+
+.nav-btn.inactive,
+.nav-btn.inactive:focus,
+.nav-btn.inactive:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.nav-btn.inactive:hover .fa,
+.nav-btn.inactive:focus .fa {
+  transform: translateY(-50%);
 }
 
 .nav-btn .fa {
@@ -193,14 +238,12 @@ ul {
 }
 
 .screen-content {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  display: block;
+  height: 100%;
   padding: 10px;
-  background-position: 50% 50%;
-  background-size: 60% 60%;
+  box-sizing: border-box;
+  background-position: 50% 70%;
+  background-size: auto 70%;
   background-repeat: no-repeat;
   color: white;
   text-align: center;
@@ -227,9 +270,9 @@ ul {
   bottom: 0;
   display: block;
   content: '';
-  width: 80px;
+  left: -15%;
+  right: -15%;
   height: 15px;
-  margin-left: -10px;
   border-radius: 10px 10px 0 0;
   background-color: inherit;
 }
@@ -277,6 +320,36 @@ ul {
 
 /* aside list styles */
 
+.close-aside-button {
+  display: block;
+  position: absolute;
+  z-index: 2;
+  right: 15px;
+  top: 14px;
+  border: none;
+  background-color: transparent;
+  font-size: 25px;
+  color: var(--secondary-if-color);
+}
+
+ .close-aside-button:focus {
+  color: darkred;
+  outline: none;
+  transform: scale(1.2);
+  transition: 0.2s;
+ }
+
+.close-aside-button:hover {
+  color: darkred;
+  outline: none;
+  transform: scale(1.2);
+  transition: 0.2s;
+}
+
+.close-aside-button:active {
+  transition: none;
+  transform: scale(1);
+}
 
 .aside-channels-list,
 .aside-watchlist,
@@ -309,7 +382,7 @@ ul {
   bottom: 10px;
   margin-top: 0;
   background-color: var(--background-color);
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .aside-channels-items {
@@ -327,9 +400,15 @@ ul {
 
 .channel-btn {
   display: block;
-  height: 100%;
+  position: relative;
+  height: 250px;;
+  width: 100%;
   border: 2px solid var(--main-if-color);
+  padding: 5px;
   background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: 50% 30%;
+  background-size: auto 65%;
   border-radius: 5px;
 }
 
@@ -341,10 +420,20 @@ ul {
   background-color: var(--active-if-color);
 }
 
-.channel-img {
-  width: 100%;
-  height: auto;
+.channel-heading {
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  right: 0;
+  margin: auto 0;
 }
+
+/* .channel-img {
+  display: block;
+  width: 100%;
+  margin-bottom: 5px;
+  height: auto;
+} */
 
 /* footer panel styles  */
 
@@ -485,40 +574,110 @@ ul {
 
 /* media-queries */
 
-@media (max-width: 950px) {
-  .nav-btn {
-    font-size: 1rem;
+@media (max-width: 1100px) {
+  .aside-list-showed .main-container {
+    width: 60%;
+    max-width: none;
   }
 
   .aside-list-container {
+    width: 40%;
+  }
+
+  .channel-btn {
+    height: 15vw;
+  }
+
+  .cinema-container {
+    height: 70vw;
+    flex-grow: 0;
+  }
+
+  
+  .aside-list-showed .cinema-container {
+    height: 45vw;
+  }
+
+  .tv {
+    position: absolute;
+    top: 15%;
+    bottom: 15%;
+    left: 20%;
+    right: 20%;
+  }
+
+  .audio {
+    position: absolute;
+    top: 20px;
+    bottom: 20px;
+    width: 10%;
+    border-radius: 5px 5px 0 0;
+  }
+
+  .audio::after {
+    width: 130%;
+    left: -15%;
+    right: -15%;
+  }
+}
+
+@media (max-width: 850px) {
+
+  .aside-list-showed .nav-btn {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 700px) {
+
+  .aside-list-container {
+    left: 0;
+    top: 83px;
+    z-index: 2;
+    width: 100%;
+    max-width: 600px;
+    padding: 10px;
+  }
+
+  .aside-list-showed .main-container {
+    width: 100%;
+    right: 0;
+    max-width: 600px;
+    padding: 10px;
+  }
+
+  .aside-list-showed .nav-item {
+    width: calc(25% - 10px);
+  }
+
+  .nav-btn {
+     padding: 20px; 
+  }
+
+  .nav-btn-heading{
     display: none;
   }
 
-  body {
-    max-width: 600px;
+  .nav-btn .fa {
+    position: static;
+    transform: none;
   }
-
-  /* .cinema-container,
-  .tv-panel-container,
-  .nav-container {
-    width: 100%;
-  } */
+  
+  .nav-btn:hover:not(.active) .fa,
+  .nav-btn:focus:not(.active) .fa {    
+    transform: scale(1.2);
+  }
+  
+  .nav-btn.active:hover .fa,
+  .nav-btn.active:focus .fa,
+  .nav-btn.inactive:hover .fa,
+  .nav-btn.inactive:focus .fa {
+    transform: none;
+  }
 }
 
-@media (max-width: 600px) {
-  html {
-    max-height: 800px;
-  }
-}
-
-@media (max-width: 480px) {
-  html {
-    max-height: 640px;
-  }
+@media (max-width: 480px) {  }
 }
 
 @media (max-width: 320px) {
-  html {
-    max-height: 480px;
-  }
 }
