@@ -1,14 +1,14 @@
 ﻿{
-"1":{"name": "TV1000 Action East", "url":"/assets/img/channels/default.png"},
-"2":{"name": "TV1000 East",  "url":"/assets/img/channels/image002.png"},
-"3":{"name": "TV1000 World Kino", "url":"/assets/img/channels/default.png"},
-"4":{"name": "TV1000 Comedy", "url":"/assets/img/channels/image004.png"},
-"5":{"name": "Viasat Explore CEE", "url":"/assets/img/channels/default.png"},
-"6":{"name": "Viasat History", "url":"/assets/img/channels/image006.png"},
-"7":{"name": "Viasat Nature CEE", "url":"/assets/img/channels/default.png"},
-"8":{"name": "Viasat Sport", "url":"/assets/img/channels/image008.png"},
-"9":{"name": "СТБ", "url":"/assets/img/channels/image009.png"},
-"10":{"name": "Simon", "url":"/assets/img/channels/image010.png"},
-"11":{"name": "7 канал (T2)", "url":"/assets/img/channels/default.png"},
-"12":{"name": "112 Украина", "url":"/assets/img/channels/default.png"}
+"1":{"name": "ABC", "url":"/assets/img/channels/Abc_2013_logo_blue.svg"},
+"2":{"name": "Animal Planet",  "url":"/assets/img/channels/Animal_Planet_Scandinavia.svg"},
+"3":{"name": "BBC", "url":"/assets/img/channels/BBC.svg"},
+"4":{"name": "CBS", "url":"/assets/img/channels/CBS_logo.svg"},
+"5":{"name": "Channel 4", "url":"/assets/img/channels/Channel_4_logo_2015.svg"},
+"6":{"name": "Fox movies", "url":"/assets/img/channels/Fox_Movies_(Asia)_logo.svg"},
+"7":{"name": "Nat Geo Wild", "url":"/assets/img/channels/Logo_Nat_Geo_Wild.svg"},
+"8":{"name": "VH1 Classic", "url":"/assets/img/channels/LOGO_VH1_CLASSIC.svg"},
+"9":{"name": "FX", "url":"/assets/img/channels/LogoFX.svg"},
+"10":{"name": "HBO", "url":"/assets/img/channels/HBO_logo.svg"},
+"11":{"name": "Megacosmos", "url":"/assets/img/channels/Megacosmos.svg"},
+"12":{"name": "MTV", "url":"/assets/img/channels/MTV_Logo_2010.svg"}
 }
