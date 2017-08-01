@@ -246,10 +246,6 @@
           self._asideListContainer.cssClass = 'aside-list-container';
           self._asideListContainer.classList.add(cssClass);
         }
-
-        if (response.currentChannelId) {
-          self._setCurrentChannelId(response.currentChannelId);
-        }
         
         self.updateStates();
       }
@@ -296,8 +292,11 @@
       }
 
       for (let key in channels) {
+
+        let isActive = this._currentChannel.id === key ? ' active' : '';
+
         HTML += `<li class="channels-list-item">
-                  <button class="channel-btn" id="channel-${key}-btn" data-channel-id="${key}">
+                  <button class="channel-btn${ isActive }" id="channel-${key}-btn" data-channel-id="${key}">
                   <img src="${channels[key].url}" alt="${channels[key].name}" class="channel-img">
                   <span class"channel-heading">${channels[key].name}</span>
                   </button>
