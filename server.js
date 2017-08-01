@@ -1,72 +1,114 @@
-const http = require('http'),
-    fs = require('fs'),
-    port = process.env.PORT || 3000;
+const express = require('express'),
+      bodyParser = require('body-parser'),
+      fs = require('fs'),
+      channelsList = require('./db/channels.json'),
+      EventEmitter = require('events').EventEmitter,
 
-function getMIME(url) {
-  const types = {
-        jpeg: 'image/JPEG',
-        jpg: 'image/JPG',
-        css: 'text/css',
-        js: 'application/x-javascript'
-      }, 
-      type = url.slice(url.lastIndexOf('.') + 1);
+      app = express(),
+      eventEmitter = new EventEmitter(),
 
-  return types[type] ? types[type] : 'text/plain';
+      port = process.env.PORT || 3000,
+      dbPath = __dirname + '/db/states.json';
+
+// function for updating DB
+
+function updateDB(req) {
+  
+  function writeDBData(data) {
+    fs.writeFile(dbPath, data, (err) => {
+      if (err) {
+        console.log(err);
+      }      
+    });
+  }
+
+  let states = require('./db/states.json');
+
+  Object.assign(states, req.body);
+
+  states = JSON.stringify(states);
+
+  writeDBData(states);
 }
 
-httpServer = http.createServer();
+// "/" callback
 
-httpServer.on('request', (req, res) => { 
+function sendDBIndexData(res) {
   
-  let file,
-      url = req.url,
-      method = req.method;
-  
-  //routes
+  fs.readFile(dbPath, (err, data) => {
 
-  if (method === 'GET') {
+    if (err) {
+      console.log(err);
+    }
 
-    if (url === '/') {
-      file = fs.readFile('./views/index.html', (err, data) => {
-        if (err) {
-          console.log('err');
-        }
+    try {
+      data = JSON.parse(data.toString('utf8'));
+    } catch (e) {
+      console.log(err);
+      res.sendFile(__dirname + 'views/index.html');
+    }
 
-        res.writeHead(202, {"Content-type":"text/html"});
-        res.write(data);
-        res.end();
-        
-      });
-    } else if (url.indexOf('/assets/') === 0) {
+    res.render('index', data);
+  });
 
-      //static files server in 'assets' folder
-      
-      fileLoc = '.' + req.url;
+}
 
-      file = fs.readFile(fileLoc, (err, data) => {
+//middlewares
 
-        // function for getting MIMEs of static files: takes request URL, returns MIME-type
+app.use(bodyParser.json());
+app.use('/assets', express.static('./assets'));
+app.set('view engine', 'jade');
 
-        if (err) {
-          res.writeHead(404);
-          res.end('Not found');
-          console.dir(err);
-        }
-        res.writeHead(202, {"Content-type": getMIME(url)});
-        res.end(data);
-      });
-    } 
-  } else {
+// ============
+//    ROUTES
+// ============
 
-    //404-requests handling
+// index page
 
-    res.writeHead(404);
-    res.write('Not found!');
-    res.end();
+app.get('/', (req, res) => {
+  sendDBIndexData(res);
+});
+
+// long-polling changes handling
+
+app.get('/update-state', (req, res) => {
+
+  console.log('req achieved');
+
+  function updateListener(reqBody) {
+    res.json(reqBody);
+    console.dir(reqBody);
   }
+  
+  eventEmitter.once('state-updated', updateListener);
+
+  req.on('aborted', () => {
+    res.end();
+    eventEmitter.removeListener('state-updated', updateListener);
+    console.log('aborted');
+  })
 
 });
 
-httpServer.listen(port, () => {
-    console.log('Started on ' + port + '!');
+//changing state handling
+
+app.post('/update-state', (req, res) => {
+
+  updateDB(req);
+  
+  eventEmitter.emit('state-updated', req.body);
+
+  res.end();
+
+});
+
+app.get('/channels', (req, res) => {
+
+  res.json(channelsList);
+
+});
+
+
+app.listen(port, () => {
+  console.log('Started on ' + port + '!');
 });
