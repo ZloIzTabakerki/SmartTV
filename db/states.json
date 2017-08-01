@@ -1,1 +1,5 @@
-{"volume":"57","currentChannelId":"2"}
+<<<<<<< HEAD
+{"volume":"79","currentChannelId":"2"}
+=======
+{"volume":"20","currentChannel":{"id":"2","name":"Channel 3","url":"/assets/img/channels/default.png"}}
+>>>>>>> 8cb06e239e65d1fcbe3410c8c0297cc26129f1ea

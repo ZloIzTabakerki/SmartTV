@@ -108,6 +108,16 @@ app.get('/channels', (req, res) => {
 
 });
 
+app.get('/current-state', (req, res) => {
+
+  let states = require('./db/states.json');
+
+  console.dir(states);
+
+  res.json(states);
+
+});
+
 
 app.listen(port, () => {
   console.log('Started on ' + port + '!');
