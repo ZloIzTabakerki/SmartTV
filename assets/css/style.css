@@ -211,7 +211,7 @@ ul {
 
 
 .aside-list-showed .cinema {
-  max-height: 40vw;   
+  max-height: 400px;   
 }
 
 .tv {
@@ -592,6 +592,11 @@ ul {
   .aside-list-showed .main-container {
     width: 60%;
     max-width: none;
+  }
+
+  
+  .aside-list-showed .cinema {
+    max-height: 45vw;   
   }
 
   .aside-list-container {
