@@ -55,17 +55,18 @@ html(lang="en")
                     = navItems[i].name
             -}
       .cinema-container
-        - let indicatorHeight = volume + '%';
-        - let indicatorColor = `rgb(${ Math.round(255 * volume / 100) }, ${ Math.round(255 - (255 * volume / 100)) }, 0)`; 
-        .audio.audio-left
-          .speaker
-            .audio-indicator(style=`height: ${indicatorHeight}; background-image: linear-gradient(to top, green 0%, ${indicatorColor} 100%)`)
-        .tv
-          .screen
-            #screen-content.screen-content
-        .audio.audio-right
-          .speaker
-            .audio-indicator(style=`height: ${indicatorHeight}; background-image: linear-gradient(to top, green 0%, ${indicatorColor} 100%)`)
+        .cinema
+          - let indicatorHeight = volume + '%';
+          - let indicatorColor = `rgb(${ Math.round(255 * volume / 100) }, ${ Math.round(255 - (255 * volume / 100)) }, 0)`; 
+          .audio.audio-left
+            .speaker
+              .audio-indicator(style=`height: ${indicatorHeight}; background-image: linear-gradient(to top, green 0%, ${indicatorColor} 100%)`)
+          .tv
+            .screen
+              #screen-content.screen-content
+          .audio.audio-right
+            .speaker
+              .audio-indicator(style=`height: ${indicatorHeight}; background-image: linear-gradient(to top, green 0%, ${indicatorColor} 100%)`)
       footer.tv-panel-container
         .tv-panel
           .tv-controls
