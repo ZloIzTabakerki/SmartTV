@@ -1,6 +1,66 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="422" height="174">
-<path d="M 206,1.8 C 219,1.8 256,8.9 256,45.3 256,74.6 242,83.3 231,85.3 223,86.8 254,85.3 254,122 254,174 209,172 209,172 L 134,172 134,1.8 z M 176,43.3 176,69 201,69 C 201,69 211,67.8 211,55.5 211,43.2 201,43.3 201,43.3 z M 176,106 176,132 201,132 C 201,132 211,131 211,118 211,106 201,106 201,106 z M 0,1.8 0,172 47,172 47,109 77,109 77,172 124,172 124,1.8 77,1.8 77,66 47,66 47,1.8 z" id="path3" style="fill-rule:nonzero" />
-<circle cx="335" cy="87" r="65" style="fill:none;stroke:#000;stroke-width:44" />
-<circle cx="335" cy="87" r="35" fill="#000" />
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="422"
+   height="422"
+   id="svg3471"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="HBO_logo.svg">
+  <metadata
+     id="metadata3482">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs3480" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="852"
+     inkscape:window-height="671"
+     id="namedview3478"
+     showgrid="false"
+     inkscape:zoom="0.85545024"
+     inkscape:cx="160.34261"
+     inkscape:cy="274.03601"
+     inkscape:window-x="971"
+     inkscape:window-y="168"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg3471" />
+  <path
+     d="m 206,119.8 c 13,0 50,7.1 50,43.5 0,29.3 -14,38 -25,40 -8,1.5 23,0 23,36.7 0,52 -45,50 -45,50 l -75,0 0,-170.2 z m -30,41.5 0,25.7 25,0 c 0,0 10,-1.2 10,-13.5 0,-12.3 -10,-12.2 -10,-12.2 z m 0,62.7 0,26 25,0 c 0,0 10,-1 10,-14 0,-12 -10,-12 -10,-12 z M 0,119.8 0,290 l 47,0 0,-63 30,0 0,63 47,0 0,-170.2 -47,0 0,64.2 -30,0 0,-64.2 z"
+     id="path3"
+     style="fill-rule:nonzero"
+     inkscape:connector-curvature="0" />
+  <circle
+     cx="335"
+     cy="205"
+     r="65"
+     style="fill:none;stroke:#000000;stroke-width:44"
+     id="circle3474" />
+  <circle
+     cx="335"
+     cy="205"
+     r="35"
+     id="circle3476"
+     style="fill:#000000" />
 </svg>

@@ -1,64 +1,12 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   id="svg2"
-   sodipodi:version="0.32"
-   inkscape:version="0.46"
-   width="690"
-   height="422"
-   version="1.0"
-   sodipodi:docname="LogoFX.svg"
-   inkscape:output_extension="org.inkscape.output.svg.inkscape">
-  <metadata
-     id="metadata7">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <defs
-     id="defs5">
-    <inkscape:perspective
-       sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="0 : 526.18109 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_z="744.09448 : 526.18109 : 1"
-       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
-       id="perspective9" />
-  </defs>
-  <sodipodi:namedview
-     inkscape:window-height="750"
-     inkscape:window-width="1280"
-     inkscape:pageshadow="2"
-     inkscape:pageopacity="0.0"
-     guidetolerance="10.0"
-     gridtolerance="10.0"
-     objecttolerance="10.0"
-     borderopacity="1.0"
-     bordercolor="#666666"
-     pagecolor="#ffffff"
-     id="base"
-     showgrid="false"
-     inkscape:zoom="1.1295629"
-     inkscape:cx="234.00907"
-     inkscape:cy="90.937545"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:current-layer="svg2" />
-  <path
-     style="fill:#000000"
-     d="M 13.675417,416 L 13.713245,6.5 L 417.71325,6.5 C 442.67447,50.924073 449.52749,63.31198 468.77992,96.499993 L 518.34803,6.5 C 598.43172,6.8223716 602.14324,6.9500251 679.88376,6.5 L 550.27331,202.20428 C 597.34895,277.27847 632.53434,336.23901 680.21325,416 L 521.53048,415.99999 L 468.77551,319.17214 L 417.71325,416 C 359.83878,415.85333 321.6428,415.97127 258.22275,416 L 388.17872,202.19079 L 334.50066,122.49999 L 155.21325,121.9893 L 155.21325,170.9863 L 293.71325,171.49999 L 293.71325,282.0407 L 155.71325,282.49999 L 155.19907,415.99999 C 103.13926,416.18526 82.281479,415.82662 13.675417,416 z"
-     id="path2386"
-     sodipodi:nodetypes="ccccccccccccccccccccc" />
+<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+ <metadata id="metadata7">image/svg+xml</metadata>
+
+ <g>
+  <title>background</title>
+  <rect fill="none" id="canvas_background" height="302" width="302" y="-1" x="-1"/>
+ </g>
+ <g>
+  <title>Layer 1</title>
+  <path stroke="null" fill="#000000" id="path2386" d="m13.675417,234.396194l0.015694,-169.896194l167.614318,0c10.356084,18.430967 13.199312,23.570547 21.186894,37.33982l20.565161,-37.33982c33.225676,0.133748 34.765537,0.186709 67.019062,0l-53.773681,81.195146c19.531067,31.1473 34.129026,55.609257 53.910382,88.701048l-65.835406,-0.000004l-21.887347,-40.172609l-21.185064,40.172613c-24.011361,-0.060851 -39.858373,-0.01192 -66.170523,0l53.917032,-88.706645l-22.270325,-33.062671l-74.384002,-0.211879l0,20.328214l57.461839,0.213123l0,45.861895l-57.254395,0.190553l-0.213327,55.387404c-21.598934,0.076866 -30.252555,-0.071929 -58.716313,0.000004z"/>
+ </g>
 </svg>

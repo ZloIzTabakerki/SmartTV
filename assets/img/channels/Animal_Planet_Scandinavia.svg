@@ -11,10 +11,10 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="400"
-   height="195.19974"
+   height="400"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.91pre1 r13432"
+   inkscape:version="0.91 r13725"
    version="1.0"
    sodipodi:docname="Animal_Planet_Scandinavia.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
@@ -104,22 +104,22 @@ image{shape-rendering:crispEdges}
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="214.50356"
-     inkscape:cy="83.825641"
+     inkscape:cx="184.26196"
+     inkscape:cy="203.82564"
      inkscape:document-units="px"
-     inkscape:current-layer="g16232"
+     inkscape:current-layer="layer1"
      width="36px"
      height="18px"
-     inkscape:window-width="1588"
-     inkscape:window-height="871"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-width="1107"
+     inkscape:window-height="742"
+     inkscape:window-x="742"
+     inkscape:window-y="142"
      showgrid="false"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="0" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -128,7 +128,7 @@ image{shape-rendering:crispEdges}
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -140,7 +140,7 @@ image{shape-rendering:crispEdges}
     <g
        id="g16228"
        clip-path="url(#id4832)"
-       transform="matrix(0,1,1,0,26.069513,-328.09536)">
+       transform="matrix(0,1,1,0,26.069513,-224.09536)">
       <g
          id="g16230"
          clip-path="url(#id4833)">
@@ -159,7 +159,7 @@ image{shape-rendering:crispEdges}
     <g
        id="g16236"
        clip-path="url(#id4834)"
-       transform="matrix(0,11.679518,11.679518,0,-1667.9545,-12865.587)">
+       transform="matrix(0,11.679518,11.679518,0,-1667.9545,-12761.587)">
       <g
          id="g16238"
          clip-path="url(#id4835)">

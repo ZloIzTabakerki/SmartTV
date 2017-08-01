@@ -200,7 +200,7 @@ ul {
   right: 0;
   padding: 10px;
   background-position: 50% 50%;
-  background-size: auto 60%;
+  background-size: 60% 60%;
   background-repeat: no-repeat;
   color: white;
   text-align: center;
@@ -309,20 +309,32 @@ ul {
   bottom: 10px;
   margin-top: 0;
   background-color: var(--background-color);
+  overflow-y: scroll;
 }
 
 .aside-channels-items {
   display: flex;
   flex-wrap: wrap;
   align-content: flex-start;
+  padding: 5px;
 }
 
 .channels-list-item {
   width: 50%;
+  padding: 5px;
+  box-sizing: border-box;
 }
 
 .channel-btn {
   display: block;
+  height: 100%;
+  border: 2px solid var(--main-if-color);
+  background-color: transparent;
+  border-radius: 5px;
+}
+
+.channel-btn:focus {
+  outline: none;
 }
 
 .channel-btn.active {
@@ -445,7 +457,6 @@ ul {
   font-size: 1.1rem;
   font-weight: bold;
 }
-
 
 .record-btn::before {
   content: '';
