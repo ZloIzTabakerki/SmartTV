@@ -52,7 +52,8 @@
 
     postNewVolumeValue() {
 
-      let body = `{"${this._volumeControl.name}":"${this._volumeControl.value}"}`;    
+      let body = `{"${this._volumeControl.name}":"${this._volumeControl.value}"}`;
+      let self = this;  
       let xhr = new XMLHttpRequest();
 
       xhr.open("POST", '/update-state', true)
@@ -63,6 +64,7 @@
         if (this.readyState != 4) return;
 
         if (this.status === 200) {
+          self.setVolume(self._volumeControl.value);
           console.log('New volume sent.');
         } else {
           console.log('New volume value wasn\'t sent')
@@ -138,7 +140,7 @@
     postNewChannel(channelId) {
 
       let channels = this._channelsList;
-
+      let self = this;
       let body = `{"currentChannel":{
                   "id":"${channelId}",
                   "name":"${channels[channelId].name}",
@@ -153,8 +155,16 @@
 
       xhr.onreadystatechange = function () {
 
-        if (this.readyState != 4) return;      
-        console.log('POST-request done.');
+        if (this.readyState != 4) return;
+        
+        if (this.status === 200) {
+          console.log('POST-request done.');
+          self.setCurrentChannel({
+            id: channelId,
+            name: channels[channelId].name,
+            url: channels[channelId].url
+          });
+        }
 
       }
 
@@ -336,7 +346,5 @@
   });
 
   // turn on subscribe for server updates
-
-  smartApp.subscribeStateUpdates();
 
 })();
