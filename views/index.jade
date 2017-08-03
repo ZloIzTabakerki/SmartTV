@@ -14,7 +14,7 @@ html(lang="en")
     link(
       rel="stylesheet" 
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css")
-    title= pageTitle
+    title SmartApp
   body
     aside.aside-list-container
       button#close-aside-button.close-aside-button
@@ -57,16 +57,25 @@ html(lang="en")
       .cinema-container
         .cinema
           - let indicatorHeight = volume + '%';
-          - let indicatorColor = `rgb(${ Math.round(255 * volume / 100) }, ${ Math.round(255 - (255 * volume / 100)) }, 0)`; 
+          - let indicatorColor = (`rgb(${ Math.round(255 * volume / 100) }, ${ Math.round(255 - (255 * volume / 100)) }, 0)`); 
           .audio.audio-left
             .speaker
-              .audio-indicator(style=`height: ${indicatorHeight}; background-image: linear-gradient(to top, green 0%, ${indicatorColor} 100%)`)
+              .audio-indicator(style=`height: ${indicatorHeight}; 
+                                      background-image: linear-gradient(
+                                                        to top, 
+                                                        green 0%, 
+                                                        ${indicatorColor} 100%)`)
           .tv
             .screen
-              #screen-content.screen-content
+              #screen-content.screen-content(style=`background-image: url('${currentChannel.url}');`) #{currentChannel.name}
+
           .audio.audio-right
             .speaker
-              .audio-indicator(style=`height: ${indicatorHeight}; background-image: linear-gradient(to top, green 0%, ${indicatorColor} 100%)`)
+              .audio-indicator(style=`height: ${indicatorHeight};
+                                      background-image: linear-gradient(
+                                                        to top,
+                                                        green 0%, 
+                                                        ${indicatorColor} 100%)`)
       footer.tv-panel-container
         .tv-panel
           .tv-controls
@@ -91,7 +100,18 @@ html(lang="en")
                 value= volume)
           .tv-info-container  
             h2.tv-info-heading Current:
-            .current-info.tv-info-field
+            .current-info.tv-info-field #{currentChannel.name}
             h2.tv-info-heading Next:
             .next-info.tv-info-field
+    script. 
+      let states = {
+        volume: "#{volume}",
+        currentChannel: {
+          id: "#{currentChannel.id}",
+          name: "#{currentChannel.name}",
+          url: "#{currentChannel.url}"
+        }
+      };
+      
+      console.dir(states);
     script(src="/assets/js/script.js")

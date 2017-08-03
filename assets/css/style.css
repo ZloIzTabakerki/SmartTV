@@ -336,7 +336,6 @@ ul {
   bottom: 0;
   height: 50%;
   width: 100%;
-  background-color: green;
   transition: height 0.3s;
 }
 
