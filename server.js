@@ -66,7 +66,7 @@ app.get('/', (req, res) => {
 
 // long-polling changes handling
 
-app.get('/updateListener', (req, res) => {
+app.get('/subscribe', (req, res) => {
 
   console.log('req achieved');
 
