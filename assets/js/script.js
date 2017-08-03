@@ -56,7 +56,7 @@
       
       let xhr = new XMLHttpRequest();
 
-      xhr.open("GET", '/update-state', true);
+      xhr.open("GET", '/updateListener', true);
       xhr.send();
 
       xhr.onreadystatechange = function () {
