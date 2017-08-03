@@ -10,6 +10,12 @@ const express = require('express'),
       port = process.env.PORT || 3000,
       dbPath = __dirname + '/db/states.json';
 
+//middlewares
+
+app.use(bodyParser.json());
+app.use('/assets', express.static('./assets'));
+app.set('view engine', 'jade');
+
 // function for updating DB
 
 function updateDB(req) {
@@ -41,23 +47,12 @@ function sendDBIndexData(res) {
       console.log(err);
     }
 
-    try {
-      data = JSON.parse(data.toString('utf8'));
-    } catch (e) {
-      console.log(err);
-      res.sendFile(__dirname + 'views/index.html');
-    }
-
+    data = JSON.parse(data.toString('utf8'));
     res.render('index', data);
   });
 
 }
 
-//middlewares
-
-app.use(bodyParser.json());
-app.use('/assets', express.static('./assets'));
-app.set('view engine', 'jade');
 
 // ============
 //    ROUTES
@@ -71,7 +66,7 @@ app.get('/', (req, res) => {
 
 // long-polling changes handling
 
-app.get('/update-state', (req, res) => {
+app.get('/updateListener', (req, res) => {
 
   console.log('req achieved');
 
@@ -107,17 +102,6 @@ app.get('/channels', (req, res) => {
   res.json(channelsList);
 
 });
-
-app.get('/current-state', (req, res) => {
-
-  let states = require('./db/states.json');
-
-  console.dir(states);
-
-  res.json(states);
-
-});
-
 
 app.listen(port, () => {
   console.log('Started on ' + port + '!');
