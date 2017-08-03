@@ -123,14 +123,21 @@
       // if app doesn't contain channels list - get one from server
 
       if (!this._channelsList) {
-        this.getCurrentChannelsList();
+        this.getCurrentChannelsList((result) => {
+          this.setChannelsList(result);
+          this._renderChannelsList();
+        });
+      }
+
+      if (!this._channelBtns && this._channelsList) {
+        this._renderChannelsList();
       }
 
       // show/hide aside list
 
       this._toggleAsideList(channelsListBtn.id);
 
-      // toggle 'active' class
+      // toggle 'active' class on button
 
       if (!channelsListBtn.classList.contains('active')) {
         if (document.querySelector('.nav-btn.active')) {
@@ -188,6 +195,36 @@
       this._renderCurrentChannel(channelObj);
 
     }
+    
+    // get channels list data from the server in JSON and set it in the app
+
+    getCurrentChannelsList(func) {
+
+      let self = this;
+      
+      let xhr = new XMLHttpRequest();
+
+      xhr.open("GET", '/channels', true);
+      xhr.send();
+
+      xhr.onreadystatechange = function () {
+
+        if (this.readyState != 4) return;
+
+        // on error - invoke method again;
+
+        if (xhr.status != 200) {
+          self.getCurrentChannelsList();
+          return;
+        }
+
+        let result = this.responseText;
+
+        result = JSON.parse(result);
+        
+        func(result);
+      }
+    }
 
     // render new current channel on page
 
@@ -222,142 +259,13 @@
 
     setChannelsList(newList) {
       this._channelsList = newList;
-      this._renderChannelsList(newList);
     }
-
-    // get channels list data from the server in JSON and set it in the app
-
-    getCurrentChannelsList() {
-
-      let self = this;
-      
-      let xhr = new XMLHttpRequest();
-
-      xhr.open("GET", '/channels', true);
-      xhr.send();
-
-      xhr.onreadystatechange = function () {
-
-        if (this.readyState != 4) return;
-
-        // on error - invoke method again;
-
-        if (xhr.status != 200) {
-          self.getCurrentChannelsList();
-          return;
-        }
-
-        let result = this.responseText;
-        
-        result = JSON.parse(result);
-        self.setChannelsList(result);
-        console.dir(smartApp._channelsList);
-
-      }
-    }
-
-    toggleWatchList() {
-
-      let watchListBtn = this._watchListBtn;
-
-      // if app doesn't contain channels list - get one from server
-
-      if (!this._watchList) {
-        this.getCurrentWatchList();
-      }
-
-      // show/hide aside list
-
-      this._toggleAsideList(watchListBtn.id);
-
-      // toggle 'active' class
-
-      if (!watchListBtn.classList.contains('active')) {
-        if (document.querySelector('.nav-btn.active')) {
-          document.querySelector('.nav-btn.active').classList.remove('active');
-        }
-        watchListBtn.classList.add('active');
-      } else {
-        watchListBtn.classList.remove('active');
-      }
-    }
-
-    _renderWatchList() {
-      let html = '<table>';
-      let self = this;
-
-      this._watchList.forEach(function(item, i, arr) {
-        html += `<tr>
-                  <td>${item.time}</td>
-                  <td>${self._channelsList[item.channelId].name}</td>
-                  <td>${item.name}</td>
-                </tr>`
-      })
-
-      html += '</table>';
-      this._watchlistContainer.innerHTML = html;
-    }
-
-    // set new watchlist and render it on page
-
-    setWatchList(newWatchList) {
-      this._watchList = newWatchList;
-      this._renderWatchList();
-    }
-
-    // get watchlist data from the server in JSON and set it in the app
-
-    getCurrentWatchList() {
-      
-      if (!this._channelsList) {
-        this.getCurrentChannelsList();
-      }
-
-      let self = this;
-      
-      let xhr = new XMLHttpRequest();
-
-      xhr.open("GET", '/watchlist', true);
-      xhr.send();
-
-      xhr.onreadystatechange = function () {
-
-        if (this.readyState != 4) return;
-
-        // on error - invoke hadler again;
-
-        if (xhr.status != 200) {
-          // self.getCurrentWatchList();
-
-          self.setWatchList([{
-            time: '10:00',
-            name: 'Looney tunes',
-            channelId: 1
-          }, {
-            time: '11:00',
-            name: 'Rick and Morty',
-            channelId: 3
-          }, {
-            time: '14:00',
-            name: 'Archer',
-            channelId: 6
-          }]);
-          
-          return;
-        }
-
-        let result = this.responseText;
-        
-        result = JSON.parse(result);
-        self.setWatchList(result);
-        console.dir(smartApp._channelsList);
-
-      }
-    }
-
+    
     // render channels list in document
     
-    _renderChannelsList(channels) {
+    _renderChannelsList() {
+
+      let channels = this._channelsList;
       
       let html = '';
 
@@ -385,6 +293,119 @@
         this._channelBtns[i].onclick = function () {
           smartApp.postNewChannel(this.dataset.channelId);
         }
+      }
+    }
+
+    toggleWatchList() {
+
+      let watchListBtn = this._watchListBtn;
+      
+      // if app doesn't contain channels list - get one from server
+      // then get watchlist and render it
+
+      if (!this._channelsList) {
+        this.getCurrentChannelsList((result) => {
+          this.setChannelsList(result);
+          this.getCurrentWatchList((result) => {
+            this.setWatchList(result);
+            this._renderWatchList();
+          });
+        });
+      }
+      
+      // if app doesn't contain watch list - get one from server and render it
+
+      if (!this._watchList && this._channelsList) {
+        this.getCurrentWatchList((result) => {
+          this.setWatchList(result);
+          this._renderWatchList();
+        });
+      }
+
+      // show/hide aside list
+
+      this._toggleAsideList(watchListBtn.id);
+
+      // toggle 'active' class
+
+      if (!watchListBtn.classList.contains('active')) {
+        if (document.querySelector('.nav-btn.active')) {
+          document.querySelector('.nav-btn.active').classList.remove('active');
+        }
+        watchListBtn.classList.add('active');
+      } else {
+        watchListBtn.classList.remove('active');
+      }
+    }
+
+    _renderWatchList() {
+      let html = '';
+      let self = this;
+
+      this._watchList.forEach(function(item, i, arr) {
+        html += `<li class="watchlist-item">
+                  <div class="watch-channel-logo" 
+                       style="background-image: url('${self._channelsList[item.channelId].url}');">
+                  </div>
+                  <div class="watch-time">${item.time}</div>
+                  <div class="watch-channel">${self._channelsList[item.channelId].name}</div>
+                  <div class="watch-name">${item.name}</div>
+                </li>`
+      })
+
+      this._watchlistContainer.innerHTML = html;
+    }
+
+    // set new watchlist and render it on page
+
+    setWatchList(newWatchList) {
+      this._watchList = newWatchList;
+    }
+
+    // get watchlist data from the server in JSON and set it in the app
+
+    getCurrentWatchList(func) {
+
+      let self = this;
+      
+      let xhr = new XMLHttpRequest();
+
+      xhr.open("GET", '/watchlist', true);
+      xhr.send();
+
+      xhr.onreadystatechange = function () {
+
+        if (this.readyState != 4) return;
+
+        // on error - invoke hadler again;
+
+        if (xhr.status != 200) {
+          // self.getCurrentWatchList();
+
+          let result = [{
+            time: '10:00',
+            name: 'Looney tunes',
+            channelId: 1
+          }, {
+            time: '11:00',
+            name: 'Rick and Morty',
+            channelId: 3
+          }, {
+            time: '14:00',
+            name: 'Archer',
+            channelId: 6
+          }];
+
+          func(result);
+
+          return;
+        }
+
+        let result = this.responseText;
+        
+        result = JSON.parse(result);
+        func(result);
+
       }
     }
 
