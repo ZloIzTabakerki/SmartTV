@@ -47,57 +47,6 @@
         this.closeAsideList();
       }
     }
-
-    // subscribing for server updates in JSON
-
-    subscribeStateUpdates() {
-
-      let self = this;
-      
-      let xhr = new XMLHttpRequest();
-
-      xhr.open("GET", '/subscribe', true);
-      xhr.send();
-
-      xhr.onreadystatechange = function () {
-
-        if (this.readyState != 4) return;
-
-        // on error - send request again
-
-        if (xhr.status != 200) {
-          self.subscribeStateUpdates();
-          return;
-        }
-
-        let result = this.responseText;
-        
-        console.log('Data achieved: ' + result);
-
-        result = JSON.parse(result);
-
-        // on achived data - refresh app values and graphic, then send request again
-
-        self._refreshValues(result);
-        
-        self.subscribeStateUpdates();
-      }
-
-    }
-
-    // set app state values if it presents in states obj
-
-    _refreshValues(states) {
-
-      if (states.volume) {
-        this.setVolume(states.volume);
-      }
-
-      if (states.currentChannel) {
-        this.setCurrentChannel(states.currentChannel);
-      }
-
-    }
         
     // send new volume value to the server in JSON
 
