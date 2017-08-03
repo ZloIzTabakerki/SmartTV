@@ -130,9 +130,17 @@
 
       this._volume = value;
 
-      console.log(`New volume: ${value}`); 
+      console.log(`New volume: ${value}`);       
+
+      this._renderNewVolumeValue(value);
       
-      // set height and upper gradient color for audio indicators 
+    }
+    
+    // render volume changes on page 
+
+    _renderNewVolumeValue(value) {
+      
+    // set height and upper gradient color for audio indicators 
 
       let color = `rgb(
                   ${ Math.round(255 * value / 100) },
@@ -145,6 +153,7 @@
                                                     green 0%,
                                                     ${color} 100%)`;
       }
+
     }
     
     // open or close channel aside list
@@ -208,6 +217,16 @@
 
     setCurrentChannel(channelObj) {
 
+      this._currentChannel = channelObj;
+
+      this._renderCurrentChannel(channelObj);
+
+    }
+
+    // render new current channel on page
+
+    _renderCurrentChannel(channelObj) {
+
       let name = channelObj.name;
       let imgUrl = channelObj.url;
       let channelId = channelObj.id;
@@ -230,6 +249,7 @@
 
         document.getElementById(`channel-${channelId}-btn`).classList.add('active');
       }
+
     }
 
     // set app channels and render it in on the page
