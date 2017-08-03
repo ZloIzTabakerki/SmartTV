@@ -46,7 +46,7 @@ html(lang="en")
             - for (let i = 0, max = navItems.length; i < max; i += 1) {
               li.nav-item
                 - let classes = ['nav-btn']
-                - if (navItems[i].name !== 'Channels') classes.push('inactive');
+                - if (navItems[i].name === 'Reclist' || navItems[i].name === 'Blocklist') classes.push('inactive');
                 button(class=classes id=navItems[i].id)
                   i(
                     class='fa ' + navItems[i].icon

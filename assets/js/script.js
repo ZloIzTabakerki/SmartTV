@@ -11,6 +11,7 @@
       // this._isMuted = states.isMuted;
 
       this._channelsList = undefined;
+      this._watchList = undefined;
 
       // UI ELEMENTS
 
@@ -23,9 +24,11 @@
       // this._shutdownControll = UIElems.shutdownControll;
 
       this._channelsListBtn = UIElems.channelsListBtn;
+      this._watchListBtn = UIElems.watchListBtn;
 
       this._asideListContainer = UIElems.asideListContainer;
       this._closeAsideBtn = UIElems.closeAsideBtn;
+
       this._channelsContainer = UIElems.channelsContainer;
       this._watchlistContainer = UIElems.watchlistContainer;
       this._reclistContainer = UIElems.reclistContainer;
@@ -41,6 +44,10 @@
 
       this._channelsListBtn.onclick = () => {        
         this.toggleChannelsList();
+      }
+      
+      this._watchListBtn.onclick = () => {        
+        this.toggleWatchList();
       }
       
       this._closeAsideBtn.onclick = () => {
@@ -233,10 +240,10 @@
 
         if (this.readyState != 4) return;
 
-        // on error - invoke hadler again;
+        // on error - invoke method again;
 
         if (xhr.status != 200) {
-          channelsListBtnHandler.call(thisBtn);
+          self.getCurrentChannelsList();
           return;
         }
 
@@ -244,6 +251,105 @@
         
         result = JSON.parse(result);
         self.setChannelsList(result);
+        console.dir(smartApp._channelsList);
+
+      }
+    }
+
+    toggleWatchList() {
+
+      let watchListBtn = this._watchListBtn;
+
+      // if app doesn't contain channels list - get one from server
+
+      if (!this._watchList) {
+        this.getCurrentWatchList();
+      }
+
+      // show/hide aside list
+
+      this._toggleAsideList(watchListBtn.id);
+
+      // toggle 'active' class
+
+      if (!watchListBtn.classList.contains('active')) {
+        if (document.querySelector('.nav-btn.active')) {
+          document.querySelector('.nav-btn.active').classList.remove('active');
+        }
+        watchListBtn.classList.add('active');
+      } else {
+        watchListBtn.classList.remove('active');
+      }
+    }
+
+    _renderWatchList() {
+      let html = '<table>';
+      let self = this;
+
+      this._watchList.forEach(function(item, i, arr) {
+        html += `<tr>
+                  <td>${item.time}</td>
+                  <td>${self._channelsList[item.channelId].name}</td>
+                  <td>${item.name}</td>
+                </tr>`
+      })
+
+      html += '</table>';
+      this._watchlistContainer.innerHTML = html;
+    }
+
+    // set new watchlist and render it on page
+
+    setWatchList(newWatchList) {
+      this._watchList = newWatchList;
+      this._renderWatchList();
+    }
+
+    // get watchlist data from the server in JSON and set it in the app
+
+    getCurrentWatchList() {
+      
+      if (!this._channelsList) {
+        this.getCurrentChannelsList();
+      }
+
+      let self = this;
+      
+      let xhr = new XMLHttpRequest();
+
+      xhr.open("GET", '/watchlist', true);
+      xhr.send();
+
+      xhr.onreadystatechange = function () {
+
+        if (this.readyState != 4) return;
+
+        // on error - invoke hadler again;
+
+        if (xhr.status != 200) {
+          // self.getCurrentWatchList();
+
+          self.setWatchList([{
+            time: '10:00',
+            name: 'Looney tunes',
+            channelId: 1
+          }, {
+            time: '11:00',
+            name: 'Rick and Morty',
+            channelId: 3
+          }, {
+            time: '14:00',
+            name: 'Archer',
+            channelId: 6
+          }]);
+          
+          return;
+        }
+
+        let result = this.responseText;
+        
+        result = JSON.parse(result);
+        self.setWatchList(result);
         console.dir(smartApp._channelsList);
 
       }
@@ -334,6 +440,7 @@
     volumeIndicators: document.querySelectorAll('.audio-indicator'),
     screenContent: document.getElementById('screen-content'),
     channelsListBtn: document.getElementById('channels-btn'),
+    watchListBtn: document.getElementById('watchlist-btn'),
 
     closeAsideBtn: document.getElementById('close-aside-button'),
     asideListContainer: document.querySelector('.aside-list-container'),
