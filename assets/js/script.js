@@ -496,10 +496,18 @@
     }
 
     toggleNewWatchListItemForm() {
+      
       if (!this._newWatchListFormContainer) {
         this._renderNewWatchListItemForm();
-      } 
+      }
+
+      let newWatchlistForm = document.forms['new-watchlist-form'];
       
+      if (newWatchlistForm.getAttribute('action') !== 'watchlist/new') {
+        newWatchlistForm.setAttribute('action', 'watchlist/new')
+        newWatchlistForm.reset();
+      };
+
       this._newWatchListFormContainer.classList.toggle('active');
       this._newWatchListFormBtn.classList.toggle('opened')
     }
@@ -526,7 +534,7 @@
                       <input type="name" 
                               name="name"
                               id="watch-item-name-field" 
-                              class="watch-item-field watch-item-name-field" 
+                              class="watch-item-field watch-item-name-field"
                               required>   
                     </div>
                     <div class="watch-item-field-container">                                 
@@ -562,6 +570,7 @@
       html += selectOptions + `</select>
                                 </div>
                                 <input type="submit" value="Add new">
+                                <input type="reset" value="Reset">
                               </form>`;
 
       formContainer.innerHTML = html;
