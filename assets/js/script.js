@@ -33,6 +33,11 @@
       this._watchlistContainer = UIElems.watchlistContainer;
       this._reclistContainer = UIElems.reclistContainer;
       this._blockContainer = UIElems.blockContainer;
+
+      //watchlist elems
+
+      this._newWatchListFormContainer = undefined;
+      this._newWatchListFormBtn = UIElems.newWatchListFormBtn;
       
       this._channelBtns = undefined;
 
@@ -52,6 +57,10 @@
       
       this._closeAsideBtn.onclick = () => {
         this.closeAsideList();
+      }
+
+      this._newWatchListFormBtn.onclick = () => {
+        this.toggleNewWatchListItemForm();
       }
     }
         
@@ -486,6 +495,94 @@
       }
     }
 
+    toggleNewWatchListItemForm() {
+      if (!this._newWatchListFormContainer) {
+        this._renderNewWatchListItemForm();
+      } 
+      
+      this._newWatchListFormContainer.classList.toggle('active');
+      this._newWatchListFormBtn.classList.toggle('opened')
+    }
+
+    //
+
+    _renderNewWatchListItemForm() {
+
+      var formContainer = document.createElement('li');
+
+      formContainer.className = 'watchlist-item new-watchlist-form-container';
+
+      let html = `<form method="POST" 
+                        action="watchlist/new" 
+                        class="new-watchlist-form watch-item-container" 
+                        name="new-watchlist-form">
+                    <div class="watch-item-logo" id="watch-item-form-logo">
+                    </div>
+                    <div class="watch-item-field-container">
+                      <label for="watch-item-name-field"
+                              class="watch-item-label watch-item-name-label">
+                        Name
+                      </label>
+                      <input type="name" 
+                              name="name"
+                              id="watch-item-name-field" 
+                              class="watch-item-field watch-item-name-field" 
+                              required>   
+                    </div>
+                    <div class="watch-item-field-container">                                 
+                      <label for="watch-item-time-field"
+                              class="watch-item-label watch-item-time-label">
+                        Time
+                      </label>
+                      <input type="datetime-local" 
+                              name="time"
+                              id="watch-item-time-field" 
+                              class="watch-item-field watch-item-time-field" 
+                              required>   
+                    </div>
+                    <div class="watch-item-field-container">                                                            
+                    <label for="watch-item-channel-select"
+                            class="watch-item-label watch-item-channel-select">
+                      Channel
+                    </label>
+                    <select id="watch-item-channel-select"
+                            name="channel"
+                            class="watch-item-field watch-item-channel-select"
+                            required>
+                      <option></option>`
+      
+      let selectOptions = ''
+
+      let channels = this._channelsList;
+
+      for (let key in channels) {
+        selectOptions += `<option value="${key}">${channels[key].name}</option>`
+      }
+      
+      html += selectOptions + `</select>
+                                </div>
+                                <input type="submit" value="Add new">
+                              </form>`;
+
+      formContainer.innerHTML = html;
+
+      this._watchlistContainer.insertBefore(formContainer, document.querySelector('.watchlist-item:first-child'));
+      
+      let self = this;
+
+      document.getElementById('watch-item-channel-select').onchange = function () {
+        let logoContainer = document.getElementById('watch-item-form-logo');
+        let imageUrl = `url('${self._channelsList[this.value].url}')`;
+        logoContainer.style.backgroundImage = imageUrl;
+      }
+
+      this.setNewWatchListFormContainer(formContainer);
+    }
+
+    setNewWatchListFormContainer(newContainer) {
+      this._newWatchListFormContainer = newContainer
+    }
+
     // close aside list: leave class that makes it "display: none", 
     // remove "active" class from nav btn and remove class from html-elem for aligning layout
 
@@ -513,7 +610,9 @@
     channelsContainer: document.querySelector('.aside-channels-items'),
     watchlistContainer: document.querySelector('.aside-watchlist-items'),
     reclistContainer: document.querySelector('.aside-reclist-items'),
-    blockContainer: document.querySelector('.aside-blocklist-items')
+    blockContainer: document.querySelector('.aside-blocklist-items'),
+
+    newWatchListFormBtn: document.getElementById('add-watch-item-btn'),
   });
 
   // turn on subscribe for server updates
