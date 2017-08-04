@@ -343,13 +343,24 @@
       let self = this;
 
       this._watchList.forEach(function(item, i, arr) {
-        html += `<li class="watchlist-item">
-                  <div class="watch-channel-logo" 
-                       style="background-image: url('${self._channelsList[item.channelId].url}');">
+        html += `<li class="watchlist-item"> 
+                  <div class="watch-item-container">                 
+                    <h3 class="watch-item-name">${item.name}</h3>
+                    <div class="watch-item-logo" 
+                        style="background-image: url('${self._channelsList[item.channelId].url}');">
+                    </div>
+                    <div class="watch-item-channel">
+                      <span class="watch-time">${item.time}</span>, ${self._channelsList[item.channelId].name}
+                    </div>
+                    <div class="watch-item-btns">
+                      <button class="watch-item-btn watch-item-edit">
+                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                      </button>
+                      <button class="watch-item-btn watch-item-delete">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                      </button>
+                    </div>
                   </div>
-                  <div class="watch-time">${item.time}</div>
-                  <div class="watch-channel">${self._channelsList[item.channelId].name}</div>
-                  <div class="watch-name">${item.name}</div>
                 </li>`
       })
 
@@ -386,6 +397,38 @@
             time: '10:00',
             name: 'Looney tunes',
             channelId: 1
+          }, {
+            time: '11:00',
+            name: 'Rick and Morty',
+            channelId: 3
+          }, {
+            time: '14:00',
+            name: 'Archer',
+            channelId: 6
+          }, {
+            time: '11:00',
+            name: 'Rick and Morty',
+            channelId: 3
+          }, {
+            time: '14:00',
+            name: 'Archer',
+            channelId: 6
+          }, {
+            time: '11:00',
+            name: 'Rick and Morty',
+            channelId: 3
+          }, {
+            time: '14:00',
+            name: 'Archer',
+            channelId: 6
+          }, {
+            time: '11:00',
+            name: 'Rick and Morty',
+            channelId: 3
+          }, {
+            time: '14:00',
+            name: 'Archer',
+            channelId: 6
           }, {
             time: '11:00',
             name: 'Rick and Morty',
