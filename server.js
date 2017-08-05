@@ -2,10 +2,8 @@ const express = require('express'),
       bodyParser = require('body-parser'),
       fs = require('fs'),
       channelsList = require('./db/channels.json'),
-      EventEmitter = require('events').EventEmitter,
 
       app = express(),
-      eventEmitter = new EventEmitter(),
 
       port = process.env.PORT || 3000,
       dbPath = __dirname + '/db/states.json';
@@ -64,34 +62,11 @@ app.get('/', (req, res) => {
   sendDBIndexData(res);
 });
 
-// long-polling changes handling
-
-app.get('/subscribe', (req, res) => {
-
-  console.log('req achieved');
-
-  function updateListener(reqBody) {
-    res.json(reqBody);
-    console.dir(reqBody);
-  }
-  
-  eventEmitter.once('state-updated', updateListener);
-
-  req.on('aborted', () => {
-    res.end();
-    eventEmitter.removeListener('state-updated', updateListener);
-    console.log('aborted');
-  })
-
-});
-
 //changing state handling
 
 app.post('/update-state', (req, res) => {
 
   updateDB(req);
-  
-  eventEmitter.emit('state-updated', req.body);
 
   res.end();
 
