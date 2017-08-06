@@ -10,15 +10,23 @@ const express = require('express'),
       statesPath = __dirname + '/db/states.json';
       watchlistPath = __dirname + '/db/watchlist.json';
 
-      var wl;
+      var wl = [];
+      refreshWatchlist();
 
-      fs.readFile(watchlistPath, (err, data) => {
+      function refreshWatchlist (){
 
-      if (err) {
-        return console.log(err);
+
+          fs.readFile(watchlistPath, (err, data) => {
+
+          if (err) {
+            return console.log(err);
+          }
+          // console.log(data.toString());
+          wl = JSON.parse(data.toString('utf8'));
+          console.log(wl);
+
+          });
       }
-      wl = JSON.parse(data);
-      });
 
 
 //middleware functions
@@ -112,20 +120,13 @@ app.post('/watchlist/new', (req, res) => {
   });
 
   writeData(watchlistPath, wl);
+  refreshWatchlist();
 
   res.send();
 
 });
 
 app.put('/watchlist/:id', (req, res) => {
-
-    fs.readFile(watchlistPath, (err, data) => {
-
-      if (err) {
-        return console.log(err);
-      }
-
-      data = JSON.parse(data.toString('utf8'));
 
       let ndata = {};
       ndata.name = req.body.name;
@@ -140,9 +141,10 @@ app.put('/watchlist/:id', (req, res) => {
 
       writeData(watchlistPath, wl);
 
+      refreshWatchlist();
+
       res.sendStatus(200);
       
-    });
 });
   
 
@@ -153,6 +155,8 @@ app.delete('/watchlist/:id', (req, res) => {
       }
 
       writeData(watchlistPath, wl);
+
+      refreshWatchlist();
 
       res.sendStatus(200);
 
