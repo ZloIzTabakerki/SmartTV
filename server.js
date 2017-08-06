@@ -116,12 +116,11 @@ app.post('/watchlist/new', (req, res) => {
 
   // let watchlist = require('./db/watchlist.json');
 
-
-  console.log(req.body);
-
   let ndata = {};
   ndata.name = req.body.name;
-  ndata.channel = req.body.channelID;
+
+  // channelID !== channelId !== channel
+  ndata.channelId = req.body.channelId;
   ndata.time = req.body.time;
 
   wl.push(ndata);
@@ -131,6 +130,9 @@ app.post('/watchlist/new', (req, res) => {
   });
 
   writeData(watchlistPath, wl);
+
+  //request accomplished conformation
+  res.send();
 
   // fs.writeFile(watchlistPath, JSON.stringify(wl), {'flags': 'a+'});
 

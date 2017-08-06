@@ -11,7 +11,7 @@
       // this._isMuted = states.isMuted;
 
       this._channelsList = undefined;
-      this._watchList = undefined;
+      this._watchList = [];
 
       // UI ELEMENTS
 
@@ -706,7 +706,7 @@
 
     getWatchListForm(watchListObj) {
 
-      let watchListId = this._watchList.indexOf(watchListObj);
+      let watchListId = watchListObj ? this._watchList.indexOf(watchListObj) : undefined;
       
       let channels = this._channelsList;
       
