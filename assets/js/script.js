@@ -429,14 +429,14 @@
 
         if (target.getAttribute('name') !== 'new-watchlist-form') return;
         
-        const newName = encodeURIComponent(target.name.value),
-            newTime = encodeURIComponent(target.time.value),
-            newChannel = encodeURIComponent(target.channel.value);
+        const newName = target.name.value,
+            newTime = target.time.value,
+            newChannel = target.channel.value;
 
         let data = [
-          `name=${newName}`,
-          `time=${newTime}`,
-          `channelId=${newChannel}`
+          `name=${encodeURIComponent(target.name.value)}`,
+          `time=${encodeURIComponent(target.time.value)}`,
+          `channelId=${encodeURIComponent(target.channel.value)}`
         ];
         
         data = data.join('&');
@@ -489,9 +489,10 @@
 
         let watchListId = target.action.slice(target.action.lastIndexOf(':') + 1);
         
-        const newName = encodeURIComponent(target.name.value),
-            newTime = encodeURIComponent(target.time.value),
-            newChannel = encodeURIComponent(target.channel.value);
+        
+        const newName = target.name.value,
+            newTime = target.time.value,
+            newChannel = target.channel.value;
 
         let watchlistOld = self._watchList[watchListId];
 
@@ -505,9 +506,9 @@
         }
 
         let data = [
-          `name=${newName}`,
-          `time=${newTime}`,
-          `channelId=${newChannel}`
+          `name=${encodeURIComponent(target.name.value)}`,
+          `time=${encodeURIComponent(target.time.value)}`,
+          `channelId=${encodeURIComponent(target.channel.value)}`
         ];
 
         data = data.join('&');
