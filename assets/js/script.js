@@ -401,7 +401,7 @@
 
         const watchListId = target.dataset.watchlistId;
 
-        xhr.open('DELETE', `watchlist/:${watchListId}`);
+        xhr.open('DELETE', `watchlist/${watchListId}`);
 
         xhr.send();
 
@@ -487,7 +487,7 @@
 
         if (target.getAttribute('name') === 'new-watchlist-form') return;
 
-        let watchListId = target.action.slice(target.action.lastIndexOf(':') + 1);
+        let watchListId = target.action.slice(target.action.lastIndexOf('/') + 1);
         
         
         const newName = target.name.value,
@@ -712,7 +712,7 @@
       let channels = this._channelsList;
       
       let url = watchListObj ?
-                `:${watchListId}` :
+                `${watchListId}` :
                 'new';
       let formName = watchListObj ?
                      `edit-watchlist-${watchListId}-form`:
