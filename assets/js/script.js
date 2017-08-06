@@ -431,12 +431,12 @@
         
         const newName = target.name.value,
             newTime = target.time.value,
-            newChannel = target.channel.value;
+            newChannel = target.channelId.value;
 
         let data = [
-          `name=${encodeURIComponent(target.name.value)}`,
-          `time=${encodeURIComponent(target.time.value)}`,
-          `channelId=${encodeURIComponent(target.channel.value)}`
+          `name=${encodeURIComponent(newName)}`,
+          `time=${encodeURIComponent(newTime)}`,
+          `channelId=${encodeURIComponent(newChannel)}`
         ];
         
         data = data.join('&');
@@ -492,7 +492,7 @@
         
         const newName = target.name.value,
             newTime = target.time.value,
-            newChannel = target.channel.value;
+            newChannel = target.channelId.value;
 
         let watchlistOld = self._watchList[watchListId];
 
@@ -506,9 +506,9 @@
         }
 
         let data = [
-          `name=${encodeURIComponent(target.name.value)}`,
-          `time=${encodeURIComponent(target.time.value)}`,
-          `channelId=${encodeURIComponent(target.channel.value)}`
+          `name=${encodeURIComponent(newName)}`,
+          `time=${encodeURIComponent(newTime)}`,
+          `channelId=${encodeURIComponent(newChannel)}`
         ];
 
         data = data.join('&');
@@ -761,7 +761,7 @@
                       Channel
                     </label>
                     <select id="watch-item-${inputId}channel-select"
-                            name="channel"
+                            name="channelId"
                             class="watch-item-field watch-item-channel-select"
                             required>
                       <option></option>`;
