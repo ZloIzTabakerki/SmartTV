@@ -354,12 +354,224 @@
     }
 
     _renderWatchList() {
-      let html = '';
+      let html = this._getWatchListHTML();
       let self = this;
 
+      this._watchlistContainer.innerHTML = html;
 
+      this._watchlistContainer.addEventListener('click', (e) => {
+        const target = e.target.closest('.watch-item-edit');
+        if (!target) return;
+
+        let itemContainer = target.closest('.watchlist-item');
+
+        itemContainer.classList.add('editing');
+
+        let watchObj = this._watchList[target.dataset.watchlistId];
+
+        const editingForm = this.getWatchListForm(watchObj);
+
+        const formContainer = document.createElement('div');
+
+        formContainer.innerHTML = editingForm;
+
+        itemContainer.append(formContainer);
+
+      });
+
+      
+      this._watchlistContainer.addEventListener('click', deleteWatchlist);
+      
+      this._watchlistContainer.addEventListener('submit', submitNewWatchlist);
+
+      this._watchlistContainer.addEventListener('submit', submitWatchlistEditing);
+      
+      this._watchlistContainer.addEventListener('click', cancelEditingWatchlist);
+
+      function deleteWatchlist(e) {
+        const target = e.target.closest('.watch-item-delete');
+
+        if (!target) return;
+
+        var confirmDelete = confirm("Are you sure you want to delete this?");
+
+        if (!confirmDelete) return;
+
+        let xhr = new XMLHttpRequest();
+
+        const watchListId = target.dataset.watchlistId;
+
+        xhr.open('DELETE', `watchlist/:${watchListId}`);
+
+        xhr.send();
+
+        xhr.onreadystatechange = function () {
+
+          if (this.readyState != 4) return;
+          
+          if (this.status !== 200) {
+            console.log('Something went wrong.');
+            return;
+          }
+
+          self._watchList.splice(watchListId, 1);
+
+          self._watchlistContainer.innerHTML = self._getWatchListHTML();
+          self._newWatchListFormBtn.classList.remove('opened');
+        }
+      }
+
+      function submitNewWatchlist(e) {
+
+        e.preventDefault();
+
+        const target = e.target;
+
+        if (target.getAttribute('name') !== 'new-watchlist-form') return;
+        
+        const newName = target.name.value,
+            newTime = target.time.value,
+            newChannel = target.channel.value;
+
+        let data = [
+          `name=${newName}`,
+          `time=${newTime}`,
+          `channelId=${newChannel}`
+        ];
+        
+        data = data.join('&');
+
+        data = encodeURIComponent(data);
+
+        let xhr = new XMLHttpRequest();
+
+        xhr.open('POST', target.action);
+
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        xhr.send(data);
+
+        xhr.onreadystatechange = function () {
+
+          if (this.readyState != 4) return;
+          
+          if (this.status !== 200) {
+            console.log('Something went wrong.');
+            return;
+          }
+
+          const watchList = self._watchList;
+          
+          watchList.push({
+            name: newName,
+            time: newTime,
+            channelId: newChannel
+          })
+
+          watchList.sort((a, b) => {
+            return new Date(a.time) > new Date(b.time) ? 1 : -1;
+          });
+          
+          target.closest('.new-watchlist-form').parentNode.remove();
+
+          self._watchlistContainer.innerHTML = self._getWatchListHTML();
+          self._newWatchListFormBtn.classList.remove('opened');
+        }
+      }
+
+      function submitWatchlistEditing(e) {
+
+        e.preventDefault();
+
+        const target = e.target;
+
+        if (target.getAttribute('name') === 'new-watchlist-form') return;
+
+        let watchListId = target.action.slice(target.action.lastIndexOf(':') + 1);
+        
+        let newName = target.name.value,
+            newTime = target.time.value,
+            newChannel = target.channel.value;
+
+        let watchlistOld = self._watchList[watchListId];
+
+        if (newName === watchlistOld.name && newTime === watchlistOld.time && newChannel === watchlistOld.channelId) {
+          
+          target.closest('.watchlist-item').classList.remove('editing');
+
+          target.closest('.new-watchlist-form').parentNode.remove();
+          
+          return;
+        }
+
+        let data = [
+          `name=${newName}`,
+          `time=${newTime}`,
+          `channelId=${newChannel}`
+        ];
+
+        data = data.join('&');
+
+        data = encodeURIComponent(data);
+        
+        let xhr = new XMLHttpRequest();
+
+        xhr.open('PUT', target.action);
+
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        xhr.send(data);
+
+        xhr.onreadystatechange = function () {
+
+          if (this.readyState != 4) return;
+          
+          if (this.status !== 200) {
+            console.log('Something went wrong.');
+            return;
+          }
+
+          const watchList = self._watchList;
+          
+          watchList.splice(watchListId, 1);
+
+          watchList.push({
+            name: newName,
+            time: newTime,
+            channelId: newChannel
+          })
+
+          watchList.sort((a, b) => {
+            return new Date(a.time) > new Date(b.time) ? 1 : -1;
+          });
+          
+          target.closest('.new-watchlist-form').parentNode.remove();
+
+          self._watchlistContainer.innerHTML = self._getWatchListHTML();
+          self._newWatchListFormBtn.classList.remove('opened');
+
+        }
+      }
+
+      function cancelEditingWatchlist(e) {
+        const target = e.target.closest('.watch-cancel-btn');
+
+        if (!target) return;
+        
+        target.closest('.watchlist-item').classList.remove('editing');
+
+        target.closest('.new-watchlist-form').parentNode.remove();
+
+      }
+    }
+
+    _getWatchListHTML() {  
+      
+      let html = '';
+
+      const self = this;
+      
       this._watchList.forEach(function(item, i, arr) {
-
         
         let time = new Date(item.time).toLocaleString('en-GB', {
           weekday: 'short', 
@@ -388,36 +600,7 @@
                 </li>`
       })
 
-      this._watchlistContainer.innerHTML = html;
-
-      this._watchlistContainer.addEventListener('click', (e) => {
-        const target = e.target.closest('.watch-item-edit');
-        if (!target) return;
-
-        let itemContainer = target.closest('.watchlist-item');
-
-        itemContainer.classList.add('editing');
-
-        let watchObj = this._watchList[target.dataset.watchlistId];
-
-        const editingForm = this.getWatchListForm(watchObj);
-
-        const formContainer = document.createElement('div');
-
-        formContainer.innerHTML = editingForm;
-
-        itemContainer.append(formContainer);
-
-        this._watchlistContainer.addEventListener('click', (e) => {
-          const target = e.target.closest('.watch-cancel-btn');
-
-          if (!target) return;
-
-          formContainer.remove();
-
-          itemContainer.classList.remove('editing');
-        })
-      });
+      return html;
     }
 
     // set new watchlist and render it on page
@@ -492,19 +675,14 @@
 
     toggleNewWatchListItemForm() {
       
-      if (!this._newWatchListFormContainer) {
+      if (!document.forms['new-watchlist-form']) {
         this._renderNewWatchListItemForm();
       }
 
-      let newWatchlistForm = document.forms['new-watchlist-form'];
+      let newWatchlistFormContainer = document.forms['new-watchlist-form'].parentNode;
       
-      if (newWatchlistForm.getAttribute('action') !== 'watchlist/new') {
-        newWatchlistForm.setAttribute('action', 'watchlist/new')
-        newWatchlistForm.reset();
-      };
-
-      this._newWatchListFormContainer.classList.toggle('active');
-      this._newWatchListFormBtn.classList.toggle('opened')
+      newWatchlistFormContainer.classList.toggle('active');
+      this._newWatchListFormBtn.classList.toggle('opened');
     }
 
     //
@@ -523,7 +701,7 @@
       
       let self = this;
 
-      this.setNewWatchListFormContainer(formContainer);
+      // this.setNewWatchListFormContainer(formContainer);
     }
 
     getWatchListForm(watchListObj) {
@@ -629,9 +807,9 @@
       return html;
     }
 
-    setNewWatchListFormContainer(newContainer) {
-      this._newWatchListFormContainer = newContainer
-    }
+    // setNewWatchListFormContainer(newContainer) {
+    //   this._newWatchListFormContainer = newContainer
+    // }
 
     // close aside list: leave class that makes it "display: none", 
     // remove "active" class from nav btn and remove class from html-elem for aligning layout
