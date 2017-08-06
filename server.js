@@ -1,58 +1,41 @@
 const express = require('express'),
       bodyParser = require('body-parser'),
+
       fs = require('fs'),
       channelsList = require('./db/channels.json'),
 
       app = express(),
 
       port = process.env.PORT || 3000,
-      statesPath = __dirname + '/db/states.json'; // < --- RENAME !
+      statesPath = __dirname + '/db/states.json';
       watchlistPath = __dirname + '/db/watchlist.json';
 
+      var wl;
 
-//middlewares
+      fs.readFile(watchlistPath, (err, data) => {
 
-app.use(bodyParser.json());
+      if (err) {
+        return console.log(err);
+      }
+      wl = JSON.parse(data);
+      });
+
+
+//middleware functions
+
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 app.use('/assets', express.static('./assets'));
 app.set('view engine', 'jade');
 
-// console.log(watchList);
 
-// function for updating DB
-
-function updateDB(req) {
-  
-  function writeDBData(data) {
-    fs.writeFile(statesPath, data, (err) => {
+function writeData(path, data) {
+    fs.writeFile(path, JSON.stringify(data), (err) => {
       if (err) {
-        console.log(err);
+        return console.log(err);
       }      
     });
-  }
-
-  let states = require('./db/states.json');
-
-  Object.assign(states, req.body);
-
-  states = JSON.stringify(states);
-
-  writeDBData(states);
-}
-
-// "/" callback
-
-function sendDBIndexData(res) {
-  
-  fs.readFile(statesPath, (err, data) => {
-
-    if (err) {
-      console.log(err);
-    }
-
-    data = JSON.parse(data.toString('utf8'));
-    res.render('index', data);
-  });
-
 }
 
 
@@ -63,14 +46,29 @@ function sendDBIndexData(res) {
 // index page
 
 app.get('/', (req, res) => {
-  sendDBIndexData(res);
+  fs.readFile(statesPath, (err, data) => {
+
+    if (err) {
+      console.log(err);
+    }
+
+    data = JSON.parse(data.toString('utf8'));
+    res.render('index', data);
+  });
 });
 
-//changing state handling
 
+
+//handling state changes
 app.post('/update-state', (req, res) => {
 
-  updateDB(req);
+  let states = require('./db/states.json');
+
+  Object.assign(states, req.body);
+
+  states = JSON.stringify(states);
+
+  writeData(statesPath, states);
 
   res.end();
 
@@ -78,7 +76,7 @@ app.post('/update-state', (req, res) => {
 
 app.get('/channels', (req, res) => {
 
-  res.json(channelsList);
+  res.send(channelsList);
 
 });
 
@@ -86,134 +84,164 @@ app.get('/channels', (req, res) => {
 
 app.get('/watchlist', (req, res) => {
 
+  // let watchlist = require('./db/watchlist.json');
+
   fs.readFile(watchlistPath, (err, data) => {
 
-    if (err) {
-      return console.log(err);
-    }
-
-    data = JSON.parse(data.toString('utf8'));
-    if (Object.keys(req.query).length === 0){
-        res.send(data);
-    } else {
-        res.send(data[req.query.id]);
-    }
-
+      if (err) {
+        return console.log(err);
+      }
+      res.send(data.toString("UTF-8"));
   });
 
+
+  // if (Object.keys(req.query).length === 0){
+
+  //       res.send(watchlist);
+
+  // } else {
+
+  //       res.send(watchlist[req.query.id]);
+
+  // }
+
+});
+
+app.get('/watchlist/:id', function(req, res) {
+    res.send(wl[req.params.id]);
+    console.log(wl[req.params.id]);
 });
 
 app.post('/watchlist/new', (req, res) => {
 
-  if (Object.keys(req.query).length === 0 || Object.keys(req.query).length > 1){
-    res.sendStatus(400);
-  } else {
-    fs.readFile(watchlistPath, (err, data) => {
+  // let watchlist = require('./db/watchlist.json');
 
-      if (err) {
-        return console.log(err);
-      }
 
-      data = JSON.parse(data.toString('utf8'));
+  console.log(req.body);
 
-      if (!data[req.query.id]){
+  let ndata = {};
+  ndata.name = req.body.name;
+  ndata.channel = req.body.channelID;
+  ndata.time = req.body.time;
 
-      data[req.query.id] = req.body;
-      data = JSON.stringify(data);
+  wl.push(ndata);
 
-      fs.writeFile(watchlistPath, data, 'utf8', function(err) {
-      if(err) {
-        return console.log(err);
-      }
-      }); 
+  wl.sort(function(a,b){
+    return new Date(a.time) > new Date(b.time) ? 1 : -1;
+  });
 
-      res.sendStatus(200);
-      } else {
-        res.sendStatus(400);
-      }
+  writeData(watchlistPath, wl);
 
-    });
+  // fs.writeFile(watchlistPath, JSON.stringify(wl), {'flags': 'a+'});
 
-  }
+  // res.sendStatus(200);
+
+  // if (Object.keys(req.query).length === 0 || Object.keys(req.query).length > 1){
+  //   res.sendStatus(400);
+  // } else {
+  //   fs.readFile(watchlistPath, (err, data) => {
+
+  //     if (err) {
+  //       return console.log(err);
+  //     }
+
+  //     data = JSON.parse(data.toString('utf8'));
+
+  //     if (!data[req.query.id]){
+
+  //     data[req.query.id] = req.body;
+  //     data = JSON.stringify(data);
+
+  //     fs.writeFile(watchlistPath, data, 'utf8', function(err) {
+  //     if(err) {
+  //       return console.log(err);
+  //     }
+  //     }); 
+
+  //     res.sendStatus(200);
+  //     } else {
+  //       res.sendStatus(400);
+  //     }
+
+  //   });
+
+  // }
 
 });
 
-app.put('/watchlist/', (req, res) => {
+// app.put('/watchlist/', (req, res) => {
 
-  if (Object.keys(req.query).length === 0 || Object.keys(req.query).length > 1){
-    res.sendStatus(400);
-  } else {
-    fs.readFile(watchlistPath, (err, data) => {
+//     fs.readFile(watchlistPath, (err, data) => {
 
-      if (err) {
-        return console.log(err);
-      }
+//       if (err) {
+//         return console.log(err);
+//       }
 
-      data = JSON.parse(data.toString('utf8'));
+//       data = JSON.parse(data.toString('utf8'));
 
-      if (data[req.query.id]){
+//       if (data[req.body.id]){
 
-      data[req.query.id] = req.body;
-      data = JSON.stringify(data);
+//       data[req.query.id] = req.body;
+//       data = JSON.stringify(data);
 
-      fs.writeFile(watchlistPath, data, 'utf8', function(err) {
-      if(err) {
-        return console.log(err);
-      }
-      }); 
+//       fs.writeFile(watchlistPath, data, 'utf8', function(err) {
+//       if(err) {
+//         return console.log(err);
+//       }
+//       }); 
 
-      res.sendStatus(200);
+//       res.sendStatus(200);
       
-      } else {
+//       } else {
 
-        res.sendStatus(400);
+//         res.sendStatus(400);
 
-      }
+//       }
 
-    });
+//     });
 
-  }
+  
 
-});
+// });
 
-app.delete('/watchlist/', (req, res) => {
+// app.delete('/watchlist/', (req, res) => {
 
-    if (Object.keys(req.query).length === 0 || Object.keys(req.query).length > 1){
+//     if (Object.keys(req.query).length === 0 || Object.keys(req.query).length > 1){
 
-      res.sendStatus(400);
+//       res.sendStatus(400);
 
-    } else {
+//     } else {
 
-      fs.readFile(watchlistPath, (err, data) => {
+//       fs.readFile(watchlistPath, (err, data) => {
 
-        if (err) {
-          console.log(err);
-        }
+//         if (err) {
+//           console.log(err);
+//         }
 
-        data = JSON.parse(data.toString('utf8'));
+//         data = JSON.parse(data.toString('utf8'));
 
-        if (data[req.query.id]){
+//         if (data[req.query.id]){
 
-        delete data[req.query.id];
-        data = JSON.stringify(data);
+//         delete data[req.query.id];
+//         data = JSON.stringify(data);
 
-        fs.writeFile(watchlistPath, data, 'utf8', function(err) {
-          if(err) {
-            return console.log(err);
-          }
-        }); 
+//         fs.writeFile(watchlistPath, data, 'utf8', function(err) {
+//           if(err) {
+//             return console.log(err);
+//           }
+//         }); 
 
-        res.sendStatus(200);
+//         res.sendStatus(200);
 
-        } else {
-          res.sendStatus(400);
-        }
+//         } else {
+//           res.sendStatus(400);
+//         }
 
-      });
+//       });
 
-    }
+//     }
 
-});
+// });
 
 // app.get('/watchlist/new', (req, res) => {
 
