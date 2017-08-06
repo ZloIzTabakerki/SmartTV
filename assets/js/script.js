@@ -429,9 +429,9 @@
 
         if (target.getAttribute('name') !== 'new-watchlist-form') return;
         
-        const newName = target.name.value,
-            newTime = target.time.value,
-            newChannel = target.channel.value;
+        const newName = encodeURIComponent(target.name.value),
+            newTime = encodeURIComponent(target.time.value),
+            newChannel = encodeURIComponent(target.channel.value);
 
         let data = [
           `name=${newName}`,
@@ -440,8 +440,8 @@
         ];
         
         data = data.join('&');
-
-        data = encodeURIComponent(data);
+        
+        console.log(decodeURIComponent(data));
 
         let xhr = new XMLHttpRequest();
 
@@ -489,9 +489,9 @@
 
         let watchListId = target.action.slice(target.action.lastIndexOf(':') + 1);
         
-        let newName = target.name.value,
-            newTime = target.time.value,
-            newChannel = target.channel.value;
+        const newName = encodeURIComponent(target.name.value),
+            newTime = encodeURIComponent(target.time.value),
+            newChannel = encodeURIComponent(target.channel.value);
 
         let watchlistOld = self._watchList[watchListId];
 
@@ -511,14 +511,14 @@
         ];
 
         data = data.join('&');
-
-        data = encodeURIComponent(data);
         
         let xhr = new XMLHttpRequest();
 
         xhr.open('PUT', target.action);
 
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        console.log(decodeURIComponent(data));
 
         xhr.send(data);
 
