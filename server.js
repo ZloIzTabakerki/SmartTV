@@ -105,6 +105,8 @@ app.get('/watchlist', (req, res) => {
 
 app.post('/watchlist/new', (req, res) => {
 
+  console.log(Object.keys(req.query).length);
+
   if (Object.keys(req.query).length === 0 || Object.keys(req.query).length > 1){
     res.sendStatus(400);
   } else {
