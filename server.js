@@ -34,6 +34,7 @@ const express = require('express'),
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+app.use(bodyParser.json());
 app.use('/assets', express.static('./assets'));
 app.set('view engine', 'jade');
 
