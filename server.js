@@ -31,10 +31,9 @@ const express = require('express'),
 
 //middleware functions
 
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+
 app.use('/assets', express.static('./assets'));
 app.set('view engine', 'jade');
 
@@ -77,7 +76,12 @@ app.post('/update-state', (req, res) => {
 
   states = JSON.stringify(states);
 
-  writeData(statesPath, states);
+  // writeData(statesPath, states);
+    fs.writeFile(statesPath, states, (err) => {
+      if (err) {
+        return console.log(err);
+    }      
+  });
 
   res.end();
 
