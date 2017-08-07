@@ -353,23 +353,45 @@
       }
     }
 
+    // render watchlistin document using app._watchList
+
     _renderWatchList() {
-      let html = this._getWatchListHTML();
-      let self = this;
+
+      const html = this._getWatchListHTML();
 
       this._watchlistContainer.innerHTML = html;
 
+      // edit-button handler
+
       this._watchlistContainer.addEventListener('click', (e) => {
+
+        // event's target must be edit button. else - 'return' 
+
         const target = e.target.closest('.watch-item-edit');
+
         if (!target) return;
 
-        let itemContainer = target.closest('.watchlist-item');
+        // look for item's container, append for in it
+
+        const itemContainer = target.closest('.watchlist-item');
+
+        // show editing form and hide item by adding class 'editing'
 
         itemContainer.classList.add('editing');
+        
+        // get item's ID from button's data-attribute
 
-        let watchObj = this._watchList[target.dataset.watchlistId];
+        const watchListId = target.dataset.watchlistId;
+
+        // get object from clients DB by ID
+
+        const watchObj = this._watchList[watchListId];
+
+        // generate editing form HTML
 
         const editingForm = this.getWatchListForm(watchObj);
+
+        // create form wrapper and render editing form
 
         const formContainer = document.createElement('div');
 
@@ -379,25 +401,29 @@
 
       });
 
+      // delete-button handler
       
-      this._watchlistContainer.addEventListener('click', deleteWatchlist);
-      
-      this._watchlistContainer.addEventListener('submit', submitNewWatchlist);
+      this._watchlistContainer.addEventListener('click', (e) => {
 
-      this._watchlistContainer.addEventListener('submit', submitWatchlistEditing);
-      
-      this._watchlistContainer.addEventListener('click', cancelEditingWatchlist);
+        //save app object in variable
+        
+        const self = this;
 
-      function deleteWatchlist(e) {
+        // event's target must be delete button. else - 'return' 
+
         const target = e.target.closest('.watch-item-delete');
 
         if (!target) return;
 
-        var confirmDelete = confirm("Are you sure you want to delete this?");
+        // ask confirm for operation
+
+        const confirmDelete = confirm("Are you sure you want to delete this?");
 
         if (!confirmDelete) return;
 
-        let xhr = new XMLHttpRequest();
+        const xhr = new XMLHttpRequest();
+
+        // get item's ID from button's data-attribute
 
         const watchListId = target.dataset.watchlistId;
 
@@ -414,42 +440,71 @@
             return;
           }
 
+          // on success delete item in client's DB
+
           self._watchList.splice(watchListId, 1);
 
+          // render new watchlist with new data
+
           self._watchlistContainer.innerHTML = self._getWatchListHTML();
+
+          // if new watchlist form was opened - it will be deleted. 
+          // so new watclist form button must show closed state 
+
           self._newWatchListFormBtn.classList.remove('opened');
         }
-      }
 
-      function submitNewWatchlist(e) {
+      });
+
+      // new item creating handler
+      
+      this._watchlistContainer.addEventListener('submit', (e) => {        
+
+        //save app object in variable
+        
+        const self = this;
+
+        // cancel default action
 
         e.preventDefault();
+
+        // cancel action in case form is not form for adding new item
 
         const target = e.target;
 
         if (target.getAttribute('name') !== 'new-watchlist-form') return;
+
+        // get data from inputs
         
         const newName = target.name.value,
-            newTime = target.time.value,
-            newChannel = target.channelId.value;
+              newTime = target.time.value,
+              newChannel = target.channelId.value;
 
-        let data = [
-          `name=${encodeURIComponent(newName)}`,
-          `time=${encodeURIComponent(newTime)}`,
-          `channelId=${encodeURIComponent(newChannel)}`
-        ];
-        
-        data = data.join('&');
-        
-        console.log(decodeURIComponent(data));
+        // create new item
 
+        const data = {
+          name: newName,
+          time: newTime,
+          channelId: newChannel
+        }
+
+        // encode item for sending on server
+        
+        let body = [];
+
+        for (let key in data) {
+          body.push(`${key}=${encodeURIComponent(data[key])}`);
+        }
+
+        body = body.join('&');
+        
         let xhr = new XMLHttpRequest();
 
         xhr.open('POST', target.action);
 
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
-        xhr.send(data);
+        xhr.send(body);
 
         xhr.onreadystatechange = function () {
 
@@ -460,26 +515,101 @@
             return;
           }
 
+          // on success add new item in client's DB 
+
           const watchList = self._watchList;
           
-          watchList.push({
-            name: newName,
-            time: newTime,
-            channelId: newChannel
-          })
+          watchList.push(data);
+
+          // sort new watchlist array by date
 
           watchList.sort((a, b) => {
             return new Date(a.time) > new Date(b.time) ? 1 : -1;
           });
           
-          target.closest('.new-watchlist-form').parentNode.remove();
+          // target.closest('.new-watchlist-form').parentNode.remove();
 
-          self._watchlistContainer.innerHTML = self._getWatchListHTML();
+          // render new watchlist with new data
+
+          self._watchlistContainer.innerHTML = self._getWatchListHTML();          
+
+          // if new watchlist form was opened - it will be deleted. 
+          // so new watclist form button must show closed state 
+
           self._newWatchListFormBtn.classList.remove('opened');
         }
-      }
+      });
 
-      function submitWatchlistEditing(e) {
+      
+        
+        const self = this;
+
+      this._watchlistContainer.addEventListener('submit', submitWatchlistEditing);
+      
+      this._watchlistContainer.addEventListener('click', cancelEditingWatchlist);
+
+      // function submitNewWatchlist(e) {
+
+      //   e.preventDefault();
+
+      //   const target = e.target;
+
+      //   if (target.getAttribute('name') !== 'new-watchlist-form') return;
+        
+      //   const newName = target.name.value,
+      //       newTime = target.time.value,
+      //       newChannel = target.channelId.value;
+
+      //   let data = [
+      //     `name=${encodeURIComponent(newName)}`,
+      //     `time=${encodeURIComponent(newTime)}`,
+      //     `channelId=${encodeURIComponent(newChannel)}`
+      //   ];
+        
+      //   data = data.join('&');
+        
+      //   console.log(decodeURIComponent(data));
+
+      //   let xhr = new XMLHttpRequest();
+
+      //   xhr.open('POST', target.action);
+
+      //   xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+      //   xhr.send(data);
+
+      //   xhr.onreadystatechange = function () {
+
+      //     if (this.readyState != 4) return;
+          
+      //     if (this.status !== 200) {
+      //       console.log('Something went wrong.');
+      //       return;
+      //     }
+
+      //     const watchList = self._watchList;
+          
+      //     watchList.push({
+      //       name: newName,
+      //       time: newTime,
+      //       channelId: newChannel
+      //     })
+
+      //     watchList.sort((a, b) => {
+      //       return new Date(a.time) > new Date(b.time) ? 1 : -1;
+      //     });
+          
+      //     target.closest('.new-watchlist-form').parentNode.remove();
+
+      //     self._watchlistContainer.innerHTML = self._getWatchListHTML();
+      //     self._newWatchListFormBtn.classList.remove('opened');
+      //   }
+      // }
+
+      function submitWatchlistEditing(e) {  
+
+        //save app object in variable
+
 
         e.preventDefault();
 
