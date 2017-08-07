@@ -482,10 +482,6 @@ ul {
               border 0.3s;
 }
 
-.add-watch-item-btn:focus {
-
-}
-
 .add-watch-item-btn:focus,
 .add-watch-item-btn:hover {
   color: var(--active-if-color);
@@ -525,6 +521,10 @@ ul {
 
 .watchlist-item {
   padding: 5px;
+}
+
+.watchlist-item.editing .watch-item-container:not(.new-watchlist-form) {
+  display: none;
 }
 
 .watch-item-container {

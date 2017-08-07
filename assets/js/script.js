@@ -11,7 +11,7 @@
       // this._isMuted = states.isMuted;
 
       this._channelsList = undefined;
-      this._watchList = undefined;
+      this._watchList = [];
 
       // UI ELEMENTS
 
@@ -298,11 +298,17 @@
       
       this._channelBtns = document.querySelectorAll('.channel-btn');
 
-      for (let i = 0, max = this._channelBtns.length; i < max; i += 1) {
-        this._channelBtns[i].onclick = function () {
-          smartApp.postNewChannel(this.dataset.channelId);
-        }
-      }
+      this._channelsContainer.addEventListener('click', (e) => {
+        let target = e.target.closest('.channel-btn');
+
+        if (!target) return;
+
+        let channelId = target.dataset.channelId;
+
+        if (channelId === this._currentChannel.id) return;
+
+        this.postNewChannel(channelId);
+      });
     }
 
     toggleWatchList() {
@@ -348,10 +354,232 @@
     }
 
     _renderWatchList() {
-      let html = '';
+      let html = this._getWatchListHTML();
       let self = this;
 
+      this._watchlistContainer.innerHTML = html;
+
+      this._watchlistContainer.addEventListener('click', (e) => {
+        const target = e.target.closest('.watch-item-edit');
+        if (!target) return;
+
+        let itemContainer = target.closest('.watchlist-item');
+
+        itemContainer.classList.add('editing');
+
+        let watchObj = this._watchList[target.dataset.watchlistId];
+
+        const editingForm = this.getWatchListForm(watchObj);
+
+        const formContainer = document.createElement('div');
+
+        formContainer.innerHTML = editingForm;
+
+        itemContainer.append(formContainer);
+
+      });
+
+      
+      this._watchlistContainer.addEventListener('click', deleteWatchlist);
+      
+      this._watchlistContainer.addEventListener('submit', submitNewWatchlist);
+
+      this._watchlistContainer.addEventListener('submit', submitWatchlistEditing);
+      
+      this._watchlistContainer.addEventListener('click', cancelEditingWatchlist);
+
+      function deleteWatchlist(e) {
+        const target = e.target.closest('.watch-item-delete');
+
+        if (!target) return;
+
+        var confirmDelete = confirm("Are you sure you want to delete this?");
+
+        if (!confirmDelete) return;
+
+        let xhr = new XMLHttpRequest();
+
+        const watchListId = target.dataset.watchlistId;
+
+        xhr.open('DELETE', `watchlist/${watchListId}`);
+
+        xhr.send();
+
+        xhr.onreadystatechange = function () {
+
+          if (this.readyState != 4) return;
+          
+          if (this.status !== 200) {
+            console.log('Something went wrong.');
+            return;
+          }
+
+          self._watchList.splice(watchListId, 1);
+
+          self._watchlistContainer.innerHTML = self._getWatchListHTML();
+          self._newWatchListFormBtn.classList.remove('opened');
+        }
+      }
+
+      function submitNewWatchlist(e) {
+
+        e.preventDefault();
+
+        const target = e.target;
+
+        if (target.getAttribute('name') !== 'new-watchlist-form') return;
+        
+        const newName = target.name.value,
+            newTime = target.time.value,
+            newChannel = target.channelId.value;
+
+        let data = [
+          `name=${encodeURIComponent(newName)}`,
+          `time=${encodeURIComponent(newTime)}`,
+          `channelId=${encodeURIComponent(newChannel)}`
+        ];
+        
+        data = data.join('&');
+        
+        console.log(decodeURIComponent(data));
+
+        let xhr = new XMLHttpRequest();
+
+        xhr.open('POST', target.action);
+
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        xhr.send(data);
+
+        xhr.onreadystatechange = function () {
+
+          if (this.readyState != 4) return;
+          
+          if (this.status !== 200) {
+            console.log('Something went wrong.');
+            return;
+          }
+
+          const watchList = self._watchList;
+          
+          watchList.push({
+            name: newName,
+            time: newTime,
+            channelId: newChannel
+          })
+
+          watchList.sort((a, b) => {
+            return new Date(a.time) > new Date(b.time) ? 1 : -1;
+          });
+          
+          target.closest('.new-watchlist-form').parentNode.remove();
+
+          self._watchlistContainer.innerHTML = self._getWatchListHTML();
+          self._newWatchListFormBtn.classList.remove('opened');
+        }
+      }
+
+      function submitWatchlistEditing(e) {
+
+        e.preventDefault();
+
+        const target = e.target;
+
+        if (target.getAttribute('name') === 'new-watchlist-form') return;
+
+        let watchListId = target.action.slice(target.action.lastIndexOf('/') + 1);
+        
+        
+        const newName = target.name.value,
+            newTime = target.time.value,
+            newChannel = target.channelId.value;
+
+        let watchlistOld = self._watchList[watchListId];
+
+        if (newName === watchlistOld.name && newTime === watchlistOld.time && newChannel === watchlistOld.channelId) {
+          
+          target.closest('.watchlist-item').classList.remove('editing');
+
+          target.closest('.new-watchlist-form').parentNode.remove();
+          
+          return;
+        }
+
+        let data = [
+          `name=${encodeURIComponent(newName)}`,
+          `time=${encodeURIComponent(newTime)}`,
+          `channelId=${encodeURIComponent(newChannel)}`
+        ];
+
+        data = data.join('&');
+        
+        let xhr = new XMLHttpRequest();
+
+        xhr.open('PUT', target.action);
+
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        console.log(decodeURIComponent(data));
+
+        xhr.send(data);
+
+        xhr.onreadystatechange = function () {
+
+          if (this.readyState != 4) return;
+          
+          if (this.status !== 200) {
+            console.log('Something went wrong.');
+            return;
+          }
+
+          const watchList = self._watchList;
+          
+          watchList.splice(watchListId, 1);
+
+          watchList.push({
+            name: newName,
+            time: newTime,
+            channelId: newChannel
+          })
+
+          watchList.sort((a, b) => {
+            return new Date(a.time) > new Date(b.time) ? 1 : -1;
+          });
+          
+          target.closest('.new-watchlist-form').parentNode.remove();
+
+          self._watchlistContainer.innerHTML = self._getWatchListHTML();
+          self._newWatchListFormBtn.classList.remove('opened');
+
+        }
+      }
+
+      function cancelEditingWatchlist(e) {
+        const target = e.target.closest('.watch-cancel-btn');
+
+        if (!target) return;
+        
+        target.closest('.watchlist-item').classList.remove('editing');
+
+        target.closest('.new-watchlist-form').parentNode.remove();
+
+      }
+    }
+
+    _getWatchListHTML() {  
+      
+      let html = '';
+
+      const self = this;
+      
       this._watchList.forEach(function(item, i, arr) {
+        
+        let time = new Date(item.time).toLocaleString('en-GB', {
+          weekday: 'short', 
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
         html += `<li class="watchlist-item"> 
                   <div class="watch-item-container">                 
                     <h3 class="watch-item-name">${item.name}</h3>
@@ -359,13 +587,13 @@
                         style="background-image: url('${self._channelsList[item.channelId].url}');">
                     </div>
                     <div class="watch-item-channel">
-                      <span class="watch-time">${item.time}</span>, ${self._channelsList[item.channelId].name}
+                      <span class="watch-time">${time}</span>, ${self._channelsList[item.channelId].name}
                     </div>
                     <div class="watch-item-btns">
-                      <button class="watch-item-btn watch-item-edit">
+                      <button class="watch-item-btn watch-item-edit" data-watchlist-id="${i}">
                         <i class="fa fa-pencil" aria-hidden="true"></i>
                       </button>
-                      <button class="watch-item-btn watch-item-delete">
+                      <button class="watch-item-btn watch-item-delete" data-watchlist-id="${i}">
                         <i class="fa fa-trash" aria-hidden="true"></i>
                       </button>
                     </div>
@@ -373,7 +601,7 @@
                 </li>`
       })
 
-      this._watchlistContainer.innerHTML = html;
+      return html;
     }
 
     // set new watchlist and render it on page
@@ -400,56 +628,7 @@
         // on error - invoke hadler again;
 
         if (xhr.status != 200) {
-          // self.getCurrentWatchList();
-
-          let result = [{
-            time: '10:00',
-            name: 'Looney tunes',
-            channelId: 1
-          }, {
-            time: '11:00',
-            name: 'Rick and Morty',
-            channelId: 3
-          }, {
-            time: '14:00',
-            name: 'Archer',
-            channelId: 6
-          }, {
-            time: '11:00',
-            name: 'Rick and Morty',
-            channelId: 3
-          }, {
-            time: '14:00',
-            name: 'Archer',
-            channelId: 6
-          }, {
-            time: '11:00',
-            name: 'Rick and Morty',
-            channelId: 3
-          }, {
-            time: '14:00',
-            name: 'Archer',
-            channelId: 6
-          }, {
-            time: '11:00',
-            name: 'Rick and Morty',
-            channelId: 3
-          }, {
-            time: '14:00',
-            name: 'Archer',
-            channelId: 6
-          }, {
-            time: '11:00',
-            name: 'Rick and Morty',
-            channelId: 3
-          }, {
-            time: '14:00',
-            name: 'Archer',
-            channelId: 6
-          }];
-
-          func(result);
-
+          self.getCurrentWatchList();
           return;
         }
 
@@ -497,19 +676,14 @@
 
     toggleNewWatchListItemForm() {
       
-      if (!this._newWatchListFormContainer) {
+      if (!document.forms['new-watchlist-form']) {
         this._renderNewWatchListItemForm();
       }
 
-      let newWatchlistForm = document.forms['new-watchlist-form'];
+      let newWatchlistFormContainer = document.forms['new-watchlist-form'].parentNode;
       
-      if (newWatchlistForm.getAttribute('action') !== 'watchlist/new') {
-        newWatchlistForm.setAttribute('action', 'watchlist/new')
-        newWatchlistForm.reset();
-      };
-
-      this._newWatchListFormContainer.classList.toggle('active');
-      this._newWatchListFormBtn.classList.toggle('opened')
+      newWatchlistFormContainer.classList.toggle('active');
+      this._newWatchListFormBtn.classList.toggle('opened');
     }
 
     //
@@ -520,58 +694,7 @@
 
       formContainer.className = 'watchlist-item new-watchlist-form-container';
 
-      let html = `<form method="POST" 
-                        action="watchlist/new" 
-                        class="new-watchlist-form watch-item-container" 
-                        name="new-watchlist-form">
-                    <div class="watch-item-logo" id="watch-item-form-logo">
-                    </div>
-                    <div class="watch-item-field-container">
-                      <label for="watch-item-name-field"
-                              class="watch-item-label watch-item-name-label">
-                        Name
-                      </label>
-                      <input type="name" 
-                              name="name"
-                              id="watch-item-name-field" 
-                              class="watch-item-field watch-item-name-field"
-                              required>   
-                    </div>
-                    <div class="watch-item-field-container">                                 
-                      <label for="watch-item-time-field"
-                              class="watch-item-label watch-item-time-label">
-                        Time
-                      </label>
-                      <input type="datetime-local" 
-                              name="time"
-                              id="watch-item-time-field" 
-                              class="watch-item-field watch-item-time-field" 
-                              required>   
-                    </div>
-                    <div class="watch-item-field-container">                                                            
-                    <label for="watch-item-channel-select"
-                            class="watch-item-label watch-item-channel-select">
-                      Channel
-                    </label>
-                    <select id="watch-item-channel-select"
-                            name="channel"
-                            class="watch-item-field watch-item-channel-select"
-                            required>
-                      <option></option>`
-      
-      let selectOptions = ''
-
-      let channels = this._channelsList;
-
-      for (let key in channels) {
-        selectOptions += `<option value="${key}">${channels[key].name}</option>`
-      }
-      
-      html += selectOptions + `</select>
-                                </div>
-                                <input type="submit" value="Add new">
-                                <input type="reset" value="Reset">
-                              </form>`;
+      let html = this.getWatchListForm();
 
       formContainer.innerHTML = html;
 
@@ -579,18 +702,115 @@
       
       let self = this;
 
-      document.getElementById('watch-item-channel-select').onchange = function () {
-        let logoContainer = document.getElementById('watch-item-form-logo');
-        let imageUrl = `url('${self._channelsList[this.value].url}')`;
-        logoContainer.style.backgroundImage = imageUrl;
+      // this.setNewWatchListFormContainer(formContainer);
+    }
+
+    getWatchListForm(watchListObj) {
+
+      let watchListId = watchListObj ? this._watchList.indexOf(watchListObj) : undefined;
+      
+      let channels = this._channelsList;
+      
+      let url = watchListObj ?
+                `${watchListId}` :
+                'new';
+      let formName = watchListObj ?
+                     `edit-watchlist-${watchListId}-form`:
+                     'new-watchlist-form';
+      let nameValue = watchListObj ? watchListObj.name : '';
+      let timeValue = watchListObj ? watchListObj.time : '';
+      let channelId = watchListObj ? watchListObj.channelId : '';
+      let logoURL = watchListObj ? `url('${channels[channelId].url}')` : '' ;
+      let inputId = watchListObj ? `${channelId}-` : '';
+
+      let html = `<form method="POST" 
+                        action="watchlist/${url}" 
+                        class="new-watchlist-form watch-item-container" 
+                        name="${formName}">
+                    <div class="watch-item-logo" 
+                         id="watch-item-form-logo"
+                         style="background-image: ${logoURL}">
+                    </div>
+                    <div class="watch-item-field-container">
+                      <label for="watch-item-${inputId}name-field"
+                              class="watch-item-label watch-item-name-label">
+                        Name
+                      </label>
+                      <input type="name" 
+                             name="name"
+                             id="watch-item-${inputId}name-field" 
+                             class="watch-item-field watch-item-name-field"
+                             value="${nameValue}"
+                             required>   
+                    </div>
+                    <div class="watch-item-field-container">                                 
+                      <label for="watch-item-${inputId}time-field"
+                              class="watch-item-label watch-item-time-label">
+                        Time
+                      </label>
+                      <input type="datetime-local" 
+                             name="time"
+                             id="watch-item-${inputId}time-field" 
+                             class="watch-item-field watch-item-time-field" 
+                             value="${timeValue}"
+                             required>   
+                    </div>
+                    <div class="watch-item-field-container">                                                            
+                    <label for="watch-item-${inputId}channel-select"
+                            class="watch-item-label watch-item-channel-label">
+                      Channel
+                    </label>
+                    <select id="watch-item-${inputId}channel-select"
+                            name="channelId"
+                            class="watch-item-field watch-item-channel-select"
+                            required>
+                      <option></option>`;
+      
+      let selectOptions = '';
+
+      if(watchListObj) {
+        for (let key in channels) {
+          selectOptions += `<option value="${key}"${channelId === key ?
+                           ' selected' :
+                           ''}>${channels[key].name}</option>`;
+        }
+      } else {
+        for (let key in channels) {
+          selectOptions += `<option value="${key}">${channels[key].name}</option>`;
+        }
       }
+      
+      html += selectOptions + `</select>
+                                </div>
+                                <input type="submit" value="Add new">
+                                ${ watchListObj ?
+                                  '<button type="button" class="watch-cancel-btn">Cancel</button>' :
+                                  '<input type="reset" value="Reset">'
+                                }
+                              </form>`;
 
-      this.setNewWatchListFormContainer(formContainer);
+      this._watchlistContainer.addEventListener('change', (e) => {
+        let target = e.target.closest('.watch-item-channel-select');
+
+        if (!target) return;
+
+        let targetContainer = target.closest('.new-watchlist-form');
+
+        let logoContainer = targetContainer.querySelector('.watch-item-logo');
+
+        let channels = this._channelsList;
+
+        let imgUrl = `url('${channels[target.value].url}')`;
+
+        logoContainer.style.backgroundImage = imgUrl;
+      })
+
+      return html;
     }
 
-    setNewWatchListFormContainer(newContainer) {
-      this._newWatchListFormContainer = newContainer
-    }
+    // setNewWatchListFormContainer(newContainer) {
+    //   this._newWatchListFormContainer = newContainer
+    // }
 
     // close aside list: leave class that makes it "display: none", 
     // remove "active" class from nav btn and remove class from html-elem for aligning layout
