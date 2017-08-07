@@ -15,15 +15,12 @@ const express = require('express'),
 
       function refreshWatchlist (){
 
-
           fs.readFile(watchlistPath, (err, data) => {
 
           if (err) {
             return console.log(err);
           }
-          // console.log(data.toString());
           wl = JSON.parse(data.toString('utf8'));
-          console.log(wl);
 
           });
       }
@@ -102,13 +99,19 @@ app.get('/watchlist', (req, res) => {
       if (err) {
         return console.log(err);
       }
-      res.send(data.toString("UTF-8"));
+      res.send(JSON.parse(data));
   });
 
 });
 
 app.get('/watchlist/:id', function(req, res) {
-    res.send(wl[req.params.id]);
+
+    if (typeof wl[req.params.id] === 'undefined') {
+      res.sendStatus(404);
+      return;
+    } else {
+      res.send(wl[req.params.id]);     
+    }
 });
 
 app.post('/watchlist/new', (req, res) => {
@@ -117,6 +120,11 @@ app.post('/watchlist/new', (req, res) => {
   ndata.name = req.body.name;
   ndata.channelId = req.body.channelId;
   ndata.time = req.body.time;
+
+  if (ndata.name === undefined || ndata.channelId === undefined || ndata.time === undefined){
+    res.sendStatus(400);
+    return;
+  }
 
   wl.push(ndata);
 
@@ -127,11 +135,16 @@ app.post('/watchlist/new', (req, res) => {
   writeData(watchlistPath, wl);
   refreshWatchlist();
 
-  res.send();
+  res.sendStatus(200);
 
 });
 
 app.put('/watchlist/:id', (req, res) => {
+
+      if (typeof wl[req.params.id] === 'undefined') {
+        res.sendStatus(404);
+        return;
+      } else {
 
       let ndata = {};
       ndata.name = req.body.name;
@@ -149,21 +162,28 @@ app.put('/watchlist/:id', (req, res) => {
       refreshWatchlist();
 
       res.sendStatus(200);
+    }
       
 });
   
 
 app.delete('/watchlist/:id', (req, res) => {
 
-      if (req.params.id > -1) {
-          wl.splice(req.params.id, 1);
-      }
+      if (typeof wl[req.params.id] === 'undefined') {
+
+        res.sendStatus(404);
+        return;
+
+      } else {
+
+      wl.splice(req.params.id, 1);
 
       writeData(watchlistPath, wl);
 
       refreshWatchlist();
 
       res.sendStatus(200);
+    }
 
 });
 
