@@ -1,61 +1,49 @@
+'use strict';
+
 const express = require('express'),
       bodyParser = require('body-parser'),
-
       fs = require('fs'),
-      channelsList = require('./db/channels.json'),
 
       app = express(),
+      
+      statesPath = __dirname + '/db%8/states.json',
+      watchlistPath = __dirname + '/db/watchlist.json',
+      
+      channelsList = require('./db/channels.json'),
+      watchList = require('./db/watchlist.json'),
+      states = require('./db/states.json'),
 
-      port = process.env.PORT || 3000,
-      statesPath = __dirname + '/db/states.json';
-      watchlistPath = __dirname + '/db/watchlist.json';
-
-let watchList = require('./db/watchlist.json');
-
+      port = process.env.PORT || 3000;
 
 //middleware functions
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-
 app.use('/assets', express.static('./assets'));
+
 app.set('view engine', 'jade');
-
-
-function writeData(path, data) {
-    fs.writeFile(path, JSON.stringify(data), (err) => {
-      if (err) {
-        console.log(err);
-      }      
-    });
-}
-
 
 // ============
 //    ROUTES
 // ============
 
-// index page
-
 app.get('/', (req, res) => {
 
-    let states = require(statesPath);
-    res.render('index', states);
+  res.render('index', states);
 
 });
 
-
-
-//handling state changes
-app.post('/update-state', (req, res) => {
-
-  let states = require('./db/states.json');
+app.put('/states', (req, res) => {
 
   Object.assign(states, req.body);
 
-  writeData(statesPath, states);
-
-  res.sendStatus(200);
+  fs.writeFile(statesPath, JSON.stringify(states), (err) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.sendStatus(200);
+    }
+  });
 
 });
 
@@ -65,92 +53,87 @@ app.get('/channels', (req, res) => {
 
 });
 
-// watchlist api
-
 app.get('/watchlist', (req, res) => {
 
-      res.send(watchList);
+  res.send(watchList);
 
 });
 
-app.get('/watchlist/:id', function(req, res) {
-
-    if (typeof watchList[req.params.id] === 'undefined') {
-      res.sendStatus(404);
-      return;
-    } else {
-      res.send(watchList[req.params.id]);     
-    }
-});
-
-app.post('/watchlist/new', (req, res) => {
+app.post('/watchlist/create', (req, res) => {
 
   if (req.body.name === undefined || req.body.channelId === undefined || req.body.time === undefined){
     res.sendStatus(400);
     return;
   }
 
-  let ndata = {};
-  ndata.name = req.body.name;
-  ndata.channelId = req.body.channelId;
-  ndata.time = req.body.time;
+  let newData = {
+    name:      req.body.name,
+    time:      req.body.time,
+    channelId: req.body.channelId
+  };
 
+  watchList.push(newData);
 
-  watchList.push(ndata);
-
-  //sorting watchlist by Date
   watchList.sort(function(a,b){
     return new Date(a.time) > new Date(b.time) ? 1 : -1; 
   });
 
-  writeData(watchlistPath, watchList);
-
-  res.sendStatus(200);
+  fs.writeFile(watchlistPath, JSON.stringify(watchList), (err) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.sendStatus(200);
+    }
+  });
 
 });
 
 app.put('/watchlist/:id', (req, res) => {
 
-      if (typeof watchList[req.params.id] === 'undefined') {
-        res.sendStatus(404);
-        return;
-      } else {
+  const id = req.params.id;
+  if (typeof watchList[id] === 'undefined') {
+    res.sendStatus(404);
+    return;
+  }
 
-      let ndata = watchList[req.params.id];
-      Object.assign(ndata, req.body);
+  let ndata = watchList[id];
+  Object.assign(ndata, req.body);
 
-      watchList[req.params.id] = ndata;
+  watchList[id] = ndata;
 
-        watchList.sort(function(a,b){
-          return new Date(a.time) > new Date(b.time) ? 1 : -1;
-        });
+  watchList.sort(function(a,b){
+    return new Date(a.time) > new Date(b.time) ? 1 : -1;
+  });
 
-      writeData(watchlistPath, watchList);
-
+  fs.writeFile(watchlistPath, JSON.stringify(watchList), (err) => {
+    if (err) {
+      console.log(err);
+    } else {
       res.sendStatus(200);
     }
+  });
       
 });
   
 
 app.delete('/watchlist/:id', (req, res) => {
 
-      if (typeof watchList[req.params.id] === 'undefined') {
+  if (typeof watchList[req.params.id] === 'undefined') {
+    res.sendStatus(404);
+    return;
+  }
 
-        res.sendStatus(404);
-        return;
+  watchList.splice(req.params.id, 1);
 
-      } else {
-
-      watchList.splice(req.params.id, 1);
-
-      writeData(watchlistPath, watchList);
-
+  fs.writeFile(watchlistPath, JSON.stringify(watchList), (err) => {
+    if (err) {
+      console.log(err);
+    } else {
       res.sendStatus(200);
     }
+  });
 
 });
-
 
 app.listen(port, () => {
   console.log('Started on ' + port + '!');
