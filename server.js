@@ -13,16 +13,7 @@ const express = require('express'),
       watchList = require('./db/watchlist.json'),
       states = require('./db/states.json'),
 
-<<<<<<< HEAD
       port = process.env.PORT || 3000;
-=======
-      port = process.env.PORT || 3000,
-      statesPath = __dirname + '/db/states.json';
-      watchlistPath = __dirname + '/db/watchlist.json';
-
-let wl = require('./db/watchlist.json'); // const also can be used - K.
-
->>>>>>> 816f1bfdd686aa422b7ac293336efba530259883
 
 //middleware functions
 
