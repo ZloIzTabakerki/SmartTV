@@ -10,7 +10,7 @@ const express = require('express'),
       statesPath = __dirname + '/db/states.json';
       watchlistPath = __dirname + '/db/watchlist.json';
 
-let wl = require('./db/watchlist.json');
+let wl = require('./db/watchlist.json'); // const also can be used - K.
 
 
 //middleware functions
@@ -55,6 +55,8 @@ app.post('/update-state', (req, res) => {
 
   writeData(statesPath, states);
 
+  //result should be sent as callback for written file - K.
+
   res.sendStatus(200);
 
 });
@@ -73,6 +75,9 @@ app.get('/watchlist', (req, res) => {
 
 });
 
+
+// no need for this route
+
 app.get('/watchlist/:id', function(req, res) {
 
     if (typeof wl[req.params.id] === 'undefined') {
@@ -84,6 +89,8 @@ app.get('/watchlist/:id', function(req, res) {
 });
 
 app.post('/watchlist/new', (req, res) => {
+
+  // regExp would be better - K.
 
   if (req.body.name === undefined || req.body.channelId === undefined || req.body.time === undefined){
     res.sendStatus(400);
@@ -110,6 +117,8 @@ app.post('/watchlist/new', (req, res) => {
 });
 
 app.put('/watchlist/:id', (req, res) => {
+
+      // would be better save wl[req.params.id] in variable
 
       if (typeof wl[req.params.id] === 'undefined') {
         res.sendStatus(404);
