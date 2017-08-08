@@ -30,12 +30,14 @@ app.set('view engine', 'jade');
 // ============
 
 app.get('/', (req, res) => {
-
   res.render('index', states);
-
 });
 
+//update app states route
+
 app.put('/states', (req, res) => {
+
+  //create buffer object with new properties
 
   let tempStates = {};
 
@@ -50,6 +52,9 @@ app.put('/states', (req, res) => {
       console.log(err);
       res.sendStatus(500);
     } else {
+
+      // on successful writeFile - save new states in server states object 
+
       states = tempStates;
       res.sendStatus(200);
     }
@@ -59,35 +64,36 @@ app.put('/states', (req, res) => {
 
 app.get('/channels', (req, res) => {
   res.send(channelsList);
-
 });
 
 app.get('/watchlist', (req, res) => {
-
-  fs.readFile(watchlistPath, (err, data) => {
-    if (err) {
-      console.log(err);
-      res.sendStatus(500);
-    }
-    res.send(JSON.parse(data));
-  });
-
+  res.send(watchList);
 });
+
+// create new watchlist item route
 
 app.post('/watchlist/create', (req, res) => {
 
-  if (req.body.name === undefined || req.body.channelId === undefined || req.body.time === undefined){
+  let newData = req.body;
+
+  // miss of one of properties can break DB's json
+
+  if (
+    newData.name === undefined || 
+    newData.channelId === undefined || 
+    newData.time === undefined
+  ) {
     res.sendStatus(400);
     return;
   }
 
-  let newData = req.body;
+  // create buffer watchlist with new item
   
   let tempWatchList = watchList.slice();
 
   tempWatchList.push(newData);
 
-  tempWatchList.sort(function(a,b){
+  tempWatchList.sort((a, b) => {
     return new Date(a.time) > new Date(b.time) ? 1 : -1; 
   });
 
@@ -96,6 +102,9 @@ app.post('/watchlist/create', (req, res) => {
       console.log(err);
       res.sendStatus(500);
     } else {
+
+      // on successfull writeFile - save it in server watchlist array
+
       watchList = tempWatchList;
       res.sendStatus(200);
     }
@@ -111,43 +120,56 @@ app.put('/watchlist/:id', (req, res) => {
     res.sendStatus(404);
     return;
   }
-  let tempWatchList = watchList.slice();
-  console.log(tempWatchList);
-  let newData = tempWatchList[id];
-  Object.assign(newData, req.body);
+  
+  // create buffer watchlist with new item
 
-  tempWatchList[id] = newData;
-  console.log(tempWatchList);
+  let tempWatchList = watchList.slice();
+
+  tempWatchList.splice(id, 1);
+
+  tempWatchList.push(req.body);
 
   tempWatchList.sort(function(a,b){
     return new Date(a.time) > new Date(b.time) ? 1 : -1;
   });
 
-  fs.writeFile(watchlistPath, JSON.stringify(watchList), (err) => {
+  fs.writeFile(watchlistPath, JSON.stringify(tempWatchList), (err) => {
     if (err) {
       console.log(err);
     } else {
+      
+      // on successfull writeFile - save it in server watchlist array
+
       watchList = tempWatchList;
       res.sendStatus(200);
     }
   });
       
-});
-  
+});  
 
 app.delete('/watchlist/:id', (req, res) => {
 
-  if (typeof watchList[req.params.id] === 'undefined') {
+  let id = req.params.id;
+
+  if (typeof watchList[id] === 'undefined') {
     res.sendStatus(404);
     return;
   }
+  
+  // create buffer watchlist with new item
 
-  watchList.splice(req.params.id, 1);
+  let tempWatchList = watchList.slice();
 
-  fs.writeFile(watchlistPath, JSON.stringify(watchList), (err) => {
+  tempWatchList.splice(id, 1);
+
+  fs.writeFile(watchlistPath, JSON.stringify(tempWatchList), (err) => {
     if (err) {
       console.log(err);
-    } else {
+    } else {      
+      
+      // on successfull writeFile - save it in server watchlist array
+
+      watchList = tempWatchList;
       res.sendStatus(200);
     }
   });
