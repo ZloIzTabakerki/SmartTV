@@ -71,7 +71,7 @@
       let self = this;  
       let xhr = new XMLHttpRequest();
 
-      xhr.open("POST", '/update-state', true)
+      xhr.open("PUT", '/states', true)
       xhr.setRequestHeader('Content-Type', 'application/json');
 
       xhr.onreadystatechange = function () {
@@ -172,7 +172,7 @@
 
       console.dir(JSON.parse(body));
 
-      xhr.open("POST", '/update-state', true)
+      xhr.open("PUT", '/states', true)
       xhr.setRequestHeader('Content-Type', 'application/json');
 
       xhr.onreadystatechange = function () {
@@ -497,7 +497,7 @@
 
         body = body.join('&');
         
-        let xhr = new XMLHttpRequest();
+        const xhr = new XMLHttpRequest();
 
         xhr.open('POST', target.action);
 
@@ -803,16 +803,20 @@
 
     getWatchListForm(watchListObj) {
 
-      let watchListId = watchListObj ? this._watchList.indexOf(watchListObj) : undefined;
-      
-      let channels = this._channelsList;
-      
+      let watchListId = watchListObj ? 
+                        this._watchList.indexOf(watchListObj) : 
+                        undefined;      
+                        
       let url = watchListObj ?
                 `${watchListId}` :
-                'new';
+                'create';
+      
       let formName = watchListObj ?
                      `edit-watchlist-${watchListId}-form`:
                      'new-watchlist-form';
+      
+      let channels = this._channelsList;
+      
       let nameValue = watchListObj ? watchListObj.name : '';
       let timeValue = watchListObj ? watchListObj.time : '';
       let channelId = watchListObj ? watchListObj.channelId : '';
@@ -899,7 +903,7 @@
         let imgUrl = `url('${channels[target.value].url}')`;
 
         logoContainer.style.backgroundImage = imgUrl;
-      })
+      });
 
       return html;
     }
