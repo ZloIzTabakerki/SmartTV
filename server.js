@@ -10,7 +10,7 @@ const express = require('express'),
       statesPath = __dirname + '/db/states.json';
       watchlistPath = __dirname + '/db/watchlist.json';
 
-let wl = require('./db/watchlist.json');
+let watchList = require('./db/watchlist.json');
 
 
 //middleware functions
@@ -69,17 +69,17 @@ app.get('/channels', (req, res) => {
 
 app.get('/watchlist', (req, res) => {
 
-      res.send(wl);
+      res.send(watchList);
 
 });
 
 app.get('/watchlist/:id', function(req, res) {
 
-    if (typeof wl[req.params.id] === 'undefined') {
+    if (typeof watchList[req.params.id] === 'undefined') {
       res.sendStatus(404);
       return;
     } else {
-      res.send(wl[req.params.id]);     
+      res.send(watchList[req.params.id]);     
     }
 });
 
@@ -96,14 +96,14 @@ app.post('/watchlist/new', (req, res) => {
   ndata.time = req.body.time;
 
 
-  wl.push(ndata);
+  watchList.push(ndata);
 
-  //sorting wathclist by Date
-  wl.sort(function(a,b){
+  //sorting watchlist by Date
+  watchList.sort(function(a,b){
     return new Date(a.time) > new Date(b.time) ? 1 : -1; 
   });
 
-  writeData(watchlistPath, wl);
+  writeData(watchlistPath, watchList);
 
   res.sendStatus(200);
 
@@ -111,21 +111,21 @@ app.post('/watchlist/new', (req, res) => {
 
 app.put('/watchlist/:id', (req, res) => {
 
-      if (typeof wl[req.params.id] === 'undefined') {
+      if (typeof watchList[req.params.id] === 'undefined') {
         res.sendStatus(404);
         return;
       } else {
 
-      let ndata = wl[req.params.id];
+      let ndata = watchList[req.params.id];
       Object.assign(ndata, req.body);
 
-      wl[req.params.id] = ndata;
+      watchList[req.params.id] = ndata;
 
-        wl.sort(function(a,b){
+        watchList.sort(function(a,b){
           return new Date(a.time) > new Date(b.time) ? 1 : -1;
         });
 
-      writeData(watchlistPath, wl);
+      writeData(watchlistPath, watchList);
 
       res.sendStatus(200);
     }
@@ -135,16 +135,16 @@ app.put('/watchlist/:id', (req, res) => {
 
 app.delete('/watchlist/:id', (req, res) => {
 
-      if (typeof wl[req.params.id] === 'undefined') {
+      if (typeof watchList[req.params.id] === 'undefined') {
 
         res.sendStatus(404);
         return;
 
       } else {
 
-      wl.splice(req.params.id, 1);
+      watchList.splice(req.params.id, 1);
 
-      writeData(watchlistPath, wl);
+      writeData(watchlistPath, watchList);
 
       res.sendStatus(200);
     }
