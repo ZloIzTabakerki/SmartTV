@@ -6,14 +6,16 @@ const express = require('express'),
 
       app = express(),
       
-      statesPath = __dirname + '/db%8/states.json',
+      statesPath = __dirname + '/db/states.json',
       watchlistPath = __dirname + '/db/watchlist.json',
       
       channelsList = require('./db/channels.json'),
-      watchList = require('./db/watchlist.json'),
-      states = require('./db/states.json'),
 
       port = process.env.PORT || 3000;
+
+let states = require('./db/states.json');
+let watchList = require('./db/watchlist.json');
+
 
 //middleware functions
 
@@ -35,12 +37,20 @@ app.get('/', (req, res) => {
 
 app.put('/states', (req, res) => {
 
-  Object.assign(states, req.body);
+  let tempStates = {};
 
-  fs.writeFile(statesPath, JSON.stringify(states), (err) => {
+  for (let key in states) {
+    tempStates[key] = states[key];
+  }
+
+  Object.assign(tempStates, req.body);
+
+  fs.writeFile(statesPath, JSON.stringify(tempStates), (err) => {
     if (err) {
       console.log(err);
+      res.sendStatus(500);
     } else {
+      states = tempStates;
       res.sendStatus(200);
     }
   });
@@ -48,14 +58,19 @@ app.put('/states', (req, res) => {
 });
 
 app.get('/channels', (req, res) => {
-
   res.send(channelsList);
 
 });
 
 app.get('/watchlist', (req, res) => {
 
-  res.send(watchList);
+  fs.readFile(watchlistPath, (err, data) => {
+    if (err) {
+      console.log(err);
+      res.sendStatus(500);
+    }
+    res.send(JSON.parse(data));
+  });
 
 });
 
@@ -66,22 +81,22 @@ app.post('/watchlist/create', (req, res) => {
     return;
   }
 
-  let newData = {
-    name:      req.body.name,
-    time:      req.body.time,
-    channelId: req.body.channelId
-  };
+  let newData = req.body;
+  
+  let tempWatchList = watchList.slice();
 
-  watchList.push(newData);
+  tempWatchList.push(newData);
 
-  watchList.sort(function(a,b){
+  tempWatchList.sort(function(a,b){
     return new Date(a.time) > new Date(b.time) ? 1 : -1; 
   });
 
-  fs.writeFile(watchlistPath, JSON.stringify(watchList), (err) => {
+  fs.writeFile(watchlistPath, JSON.stringify(tempWatchList), (err) => {
     if (err) {
       console.log(err);
+      res.sendStatus(500);
     } else {
+      watchList = tempWatchList;
       res.sendStatus(200);
     }
   });
@@ -91,17 +106,20 @@ app.post('/watchlist/create', (req, res) => {
 app.put('/watchlist/:id', (req, res) => {
 
   const id = req.params.id;
+
   if (typeof watchList[id] === 'undefined') {
     res.sendStatus(404);
     return;
   }
+  let tempWatchList = watchList.slice();
+  console.log(tempWatchList);
+  let newData = tempWatchList[id];
+  Object.assign(newData, req.body);
 
-  let ndata = watchList[id];
-  Object.assign(ndata, req.body);
+  tempWatchList[id] = newData;
+  console.log(tempWatchList);
 
-  watchList[id] = ndata;
-
-  watchList.sort(function(a,b){
+  tempWatchList.sort(function(a,b){
     return new Date(a.time) > new Date(b.time) ? 1 : -1;
   });
 
@@ -109,6 +127,7 @@ app.put('/watchlist/:id', (req, res) => {
     if (err) {
       console.log(err);
     } else {
+      watchList = tempWatchList;
       res.sendStatus(200);
     }
   });
