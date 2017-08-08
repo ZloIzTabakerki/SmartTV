@@ -10,23 +10,7 @@ const express = require('express'),
       statesPath = __dirname + '/db/states.json';
       watchlistPath = __dirname + '/db/watchlist.json';
 
-      var wl = [];
-      refreshWatchlist();
-
-      function refreshWatchlist (){
-
-
-          fs.readFile(watchlistPath, (err, data) => {
-
-          if (err) {
-            return console.log(err);
-          }
-          // console.log(data.toString());
-          wl = JSON.parse(data.toString('utf8'));
-          console.log(wl);
-
-          });
-      }
+let wl = require('./db/watchlist.json');
 
 
 //middleware functions
@@ -41,7 +25,7 @@ app.set('view engine', 'jade');
 function writeData(path, data) {
     fs.writeFile(path, JSON.stringify(data), (err) => {
       if (err) {
-        return console.log(err);
+        console.log(err);
       }      
     });
 }
@@ -54,15 +38,10 @@ function writeData(path, data) {
 // index page
 
 app.get('/', (req, res) => {
-  fs.readFile(statesPath, (err, data) => {
 
-    if (err) {
-      console.log(err);
-    }
+    let states = require(statesPath);
+    res.render('index', states);
 
-    data = JSON.parse(data.toString('utf8'));
-    res.render('index', data);
-  });
 });
 
 
@@ -74,16 +53,9 @@ app.post('/update-state', (req, res) => {
 
   Object.assign(states, req.body);
 
-  states = JSON.stringify(states);
+  writeData(statesPath, states);
 
-  // writeData(statesPath, states);
-    fs.writeFile(statesPath, states, (err) => {
-      if (err) {
-        return console.log(err);
-    }      
-  });
-
-  res.end();
+  res.sendStatus(200);
 
 });
 
@@ -97,46 +69,55 @@ app.get('/channels', (req, res) => {
 
 app.get('/watchlist', (req, res) => {
 
-  fs.readFile(watchlistPath, (err, data) => {
-
-      if (err) {
-        return console.log(err);
-      }
-      res.send(data.toString("UTF-8"));
-  });
+      res.send(wl);
 
 });
 
 app.get('/watchlist/:id', function(req, res) {
-    res.send(wl[req.params.id]);
+
+    if (typeof wl[req.params.id] === 'undefined') {
+      res.sendStatus(404);
+      return;
+    } else {
+      res.send(wl[req.params.id]);     
+    }
 });
 
 app.post('/watchlist/new', (req, res) => {
+
+  if (req.body.name === undefined || req.body.channelId === undefined || req.body.time === undefined){
+    res.sendStatus(400);
+    return;
+  }
 
   let ndata = {};
   ndata.name = req.body.name;
   ndata.channelId = req.body.channelId;
   ndata.time = req.body.time;
 
+
   wl.push(ndata);
 
+  //sorting wathclist by Date
   wl.sort(function(a,b){
-    return new Date(a.time) > new Date(b.time) ? 1 : -1;
+    return new Date(a.time) > new Date(b.time) ? 1 : -1; 
   });
 
   writeData(watchlistPath, wl);
-  refreshWatchlist();
 
-  res.send();
+  res.sendStatus(200);
 
 });
 
 app.put('/watchlist/:id', (req, res) => {
 
-      let ndata = {};
-      ndata.name = req.body.name;
-      ndata.channelId = req.body.channelId;
-      ndata.time = req.body.time;
+      if (typeof wl[req.params.id] === 'undefined') {
+        res.sendStatus(404);
+        return;
+      } else {
+
+      let ndata = wl[req.params.id];
+      Object.assign(ndata, req.body);
 
       wl[req.params.id] = ndata;
 
@@ -146,24 +127,27 @@ app.put('/watchlist/:id', (req, res) => {
 
       writeData(watchlistPath, wl);
 
-      refreshWatchlist();
-
       res.sendStatus(200);
+    }
       
 });
   
 
 app.delete('/watchlist/:id', (req, res) => {
 
-      if (req.params.id > -1) {
-          wl.splice(req.params.id, 1);
-      }
+      if (typeof wl[req.params.id] === 'undefined') {
+
+        res.sendStatus(404);
+        return;
+
+      } else {
+
+      wl.splice(req.params.id, 1);
 
       writeData(watchlistPath, wl);
 
-      refreshWatchlist();
-
       res.sendStatus(200);
+    }
 
 });
 
