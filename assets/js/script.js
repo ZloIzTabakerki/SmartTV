@@ -11,7 +11,7 @@
       // this._isMuted = states.isMuted;
 
       this._channelsList = undefined;
-      this._watchList = [];
+      this._watchList = undefined;
 
       // UI ELEMENTS
 
