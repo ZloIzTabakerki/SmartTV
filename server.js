@@ -30,15 +30,7 @@ app.set('view engine', 'jade');
 // ============
 
 app.get('/', (req, res) => {
-  
-  let tempStates = {};
-
-  for (let key in states) {
-    tempStates[key] = states[key];
-  }
-
-  res.render('index', tempStates);
-  
+  res.render('index', {states: states});  
 });
 
 //update app states route
