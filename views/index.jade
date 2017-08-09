@@ -26,6 +26,8 @@ html(lang="en")
       .aside-watchlist
         h2.aside-list-heading Watchlist
         ul.aside-watchlist-items
+        button#add-watch-item-btn.add-watch-item-btn
+          i(class="fa fa-plus" aria-hidden="true")
       
       .aside-reclist
         h2.aside-list-heading Reclist
@@ -46,7 +48,7 @@ html(lang="en")
             - for (let i = 0, max = navItems.length; i < max; i += 1) {
               li.nav-item
                 - let classes = ['nav-btn']
-                - if (navItems[i].name !== 'Channels') classes.push('inactive');
+                - if (navItems[i].name === 'Reclist' || navItems[i].name === 'Blocklist') classes.push('inactive');
                 button(class=classes id=navItems[i].id)
                   i(
                     class='fa ' + navItems[i].icon
@@ -56,8 +58,8 @@ html(lang="en")
             -}
       .cinema-container
         .cinema
-          - let indicatorHeight = volume + '%';
-          - let indicatorColor = (`rgb(${ Math.round(255 * volume / 100) }, ${ Math.round(255 - (255 * volume / 100)) }, 0)`); 
+          - let indicatorHeight = states.volume + '%';
+          - let indicatorColor = (`rgb(${ Math.round(255 * states.volume / 100) }, ${ Math.round(255 - (255 * states.volume / 100)) }, 0)`); 
           .audio.audio-left
             .speaker
               .audio-indicator(style=`height: ${indicatorHeight}; 
@@ -67,7 +69,7 @@ html(lang="en")
                                                         ${indicatorColor} 100%)`)
           .tv
             .screen
-              #screen-content.screen-content(style=`background-image: url('${currentChannel.url}');`) #{currentChannel.name}
+              #screen-content.screen-content(style=`background-image: url('${states.currentChannel.url}');`) #{states.currentChannel.name}
 
           .audio.audio-right
             .speaker
@@ -97,19 +99,19 @@ html(lang="en")
                 step="1" 
                 min="0" 
                 max="100" 
-                value= volume)
+                value= states.volume)
           .tv-info-container  
             h2.tv-info-heading Current:
-            .current-info.tv-info-field #{currentChannel.name}
+            .current-info.tv-info-field #{states.currentChannel.name}
             h2.tv-info-heading Next:
             .next-info.tv-info-field
     script. 
       let states = {
-        volume: "#{volume}",
+        volume: "#{states.volume}",
         currentChannel: {
-          id: "#{currentChannel.id}",
-          name: "#{currentChannel.name}",
-          url: "#{currentChannel.url}"
+          id: "#{states.currentChannel.id}",
+          name: "#{states.currentChannel.name}",
+          url: "#{states.currentChannel.url}"
         }
       };
       
